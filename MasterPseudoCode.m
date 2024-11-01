@@ -8,6 +8,11 @@
     %Include field of view and range
     %Assumed that mobile is worse than fixed
 
+%Inputs:
+    %Effector locations
+    %Adversary flight path
+    %Effector capabilities
+
 %Create statement for detection
     %Pull adversary flight path
     %If the object crosses into the field of view and range, it is detected
