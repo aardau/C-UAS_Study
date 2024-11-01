@@ -3,7 +3,7 @@ clear
 
 %Set paramaters for fixed and mobile effectors
     %Include field of view and range
-    %Assumed that mobile is worse than fixed 
+    %Assumed that mobile is worse than fixed
 
 %Create statement for detection
     %Pull adversary flight path
