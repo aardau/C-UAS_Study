@@ -16,4 +16,3 @@ clear
 %Outputs: p
     %Positive detection notification
     %Which effector detected the object to pass along to tracking
-    %
