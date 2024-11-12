@@ -18,3 +18,8 @@
     % disabled until further notice
             % charge up time?
     %continuous energy output until target is neutralized
+
+%% kill
+
+% if projectile location = target location, then target is killed
+    % when target is killed, remove target from simulation
