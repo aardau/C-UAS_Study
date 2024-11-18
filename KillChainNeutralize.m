@@ -44,13 +44,16 @@
 function Kinetic_kill = Kinetic_Neutralize(target_location, projectile_location, fireRate_refreshRate)
    %% target contact 
     if target_location == projectile_location 
-        Kinetic_kill=1;
+        Kinetic_kill = 1;
         target_location = [];
-        projectile_location = []; %taking both off the map, not accounting for debris
+        projectile_location = []; 
+        %taking both off the map, not accounting for debris
     else
         Kinetic_kill = 0;
         %projectile and target will continue on designated paths
     end
+
+    % have to write in about how fast the projectile is going 
     %% refresh fire rate
     fireRate_refreshRate = 10; %firerate timestep
     if fireRate_refreshRate > 0
@@ -67,6 +70,7 @@ function Kinetic_kill = Kinetic_Neutralize(target_location, projectile_location,
 end
 
 function DEW_kill = DEW_Neutralize(target_location, energy_location, energy_refreshRate, time_to_kill)
+    %speed of light, so time from fire->hit is negligable
 end
     
     
