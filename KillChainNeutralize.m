@@ -41,7 +41,7 @@
     %target continues on path
     %projectile continues on path
 %end
-function Kinetic_kill = Kinetic_Neutralize(target_location, projectile_location, fireRate_refreshRate)
+function Kinetic_kill = Kinetic_Neutralize(target_location, projectile_location, fireRate_refreshRate, in_range)
    %% target contact 
     if target_location == projectile_location 
         Kinetic_kill = 1;
@@ -56,11 +56,12 @@ function Kinetic_kill = Kinetic_Neutralize(target_location, projectile_location,
     % have to write in about how fast the projectile is going 
     %% refresh fire rate
     fireRate_refreshRate = 10; %firerate timestep
+
     if fireRate_refreshRate > 0
         while true
             fireRate_refreshRate = fireRate_refreshRate - 1;
             fire_projectile = 0;
-            if fireRate_refreshRate <= 0 
+            if fireRate_refreshRate <= 0 && in_range==1
                 fire_projectile = 1;
                 fireRate_refreshRate = 10;
                 break
@@ -69,7 +70,7 @@ function Kinetic_kill = Kinetic_Neutralize(target_location, projectile_location,
     end
 end
 
-function DEW_kill = DEW_Neutralize(target_location, energy_location, energy_refreshRate, time_to_kill)
+function DEW_kill = DEW_Neutralize(target_location, energy_location, energy_refreshRate, time_to_kill, in_range)
     %speed of light, so time from fire->hit is negligable
 end
     
