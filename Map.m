@@ -1,4 +1,4 @@
-% add desc
+% add description
 close all; clear; clc
 
 % define region size
