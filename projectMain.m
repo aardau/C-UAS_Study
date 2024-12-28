@@ -3,6 +3,7 @@ clear; clc; close all;
 
 %% Define parameters
 % Map generation parameters
+% Allow the projectMainApp to change these numbers eventually
 xmin = -2500; xmax = 2500;
 ymin = -2500; ymax = 2500;
 rangemin = 100; rangemax = 1500;

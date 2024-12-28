@@ -1,4 +1,7 @@
-
+% This function creates the various structures and environmental details
+% used in the map generated
+% Inputs:
+%
 function mapData = setupMap(xmin, xmax, ymin, ymax, rangemin, rangemax, numEffectors)
     % Setup effector data
     mapData.effectors = zeros(numEffectors, 3);
