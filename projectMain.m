@@ -3,11 +3,11 @@ clear; clc; close all;
 
 %% Define parameters
 % Map generation parameters
-% Allow the projectMainApp to change these numbers eventually
+% Allow the projectMainApp (user GUI) to change these numbers eventually
 xmin = -2500; xmax = 2500;
 ymin = -2500; ymax = 2500;
-rangemin = 100; rangemax = 1500;
-numEffectors = 3;
+rangemin = 100; rangemax = 100;
+numEffectors = randi(3);
 
 % UAS generation parameters
 uasParameters = [0, 0, 70, 22, 40];

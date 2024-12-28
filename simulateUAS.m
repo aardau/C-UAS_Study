@@ -1,9 +1,12 @@
+% This function
+
 function [x, y, totalDistanceToFP] = simulateUAS(uavParameters, fixedPoint, pidTune, simParameters, map)
-    % Call Hybrid A* for path planning
-    start = [uavParameters(1), uavParameters(2), uavParameters(3)];
-    goal = [fixedPoint(1), fixedPoint(2), 0]; % Assume 0 orientation for simplicity
-    params = struct('resolution', 1, 'turnRadius', uavParameters(5));
-    path = hybridAStar(start, goal, map, params);
+    
+% % Call Hybrid A* for path planning
+    % start = [uavParameters(1), uavParameters(2), uavParameters(3)];
+    % goal = [fixedPoint(1), fixedPoint(2), 0]; % Assume 0 orientation for simplicity
+    % params = struct('resolution', 1, 'turnRadius', uavParameters(5));
+    % path = hybridAStar(start, goal, map, params);
 
     % Follow the path using existing PID or bicycle model logic
 
