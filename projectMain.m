@@ -16,7 +16,9 @@ pidTune = [0.5, 0.1, 0.05];
 simParameters = [0.1, 500];
 
 %% Setup and plot map
+% Gather the map data generated in tbe setupMap function and place into a structure array
 mapData = setupMap(xmin, xmax, ymin, ymax, rangemin, rangemax, numEffectors);
+% Plot the map and map data
 plotMap(mapData, xmin, xmax, ymin, ymax);
 
 %% Simulate UAS

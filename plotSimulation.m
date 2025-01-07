@@ -6,5 +6,6 @@ function plotSimulation(x, y, fixedPoint)
     title('UAV Simulation');
     xlabel('X Position (m)');
     ylabel('Y Position (m)');
+    %legend
     grid on;
 end

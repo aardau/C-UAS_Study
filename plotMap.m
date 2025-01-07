@@ -1,13 +1,14 @@
-% This function generates the map given the structures 
+% This function generates the map and places any map features generated 
+% from setupMap
 % Inputs:
-% -mapData: Structure variable that contains the generated structures and
+% -mapData: Structure variable that contains the generated map features and
 %           their associated information
 % -xmin: Minimum value of the map's x-direction length from zero
 % -xmax: Maximum value of the map's x-direction length from zero
 % -ymin: Minimum value of the map's y-direction length from zero
 % -ymax: Maximum value of the map's y-direction length from zero
 % Outputs:
-% -Plot of map with structures
+% -Figure of plotted map and map features
 
 function plotMap(mapData, xmin, xmax, ymin, ymax)
     % Plot the map using data from setupMap

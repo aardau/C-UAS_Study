@@ -1,5 +1,5 @@
 % This function creates the various structures and environmental details
-% used in the map generation in the plotMap function
+% used in the map generation within the plotMap function
 % Inputs:
 % -xmin: Minimum value of the map's x-direction length from zero
 % -xmax: Maximum value of the map's x-direction length from zero
@@ -9,7 +9,7 @@
 % -rangemax: Maximum effector detection radius
 % -numEffectors: number of effectors that spawn on the map
 % Outputs:
-% -mapData: Structure variable that contains the generated structures and
+% -mapData: Structure variable that contains the generated map features and
 %           their associated information
 
 function mapData = setupMap(xmin, xmax, ymin, ymax, rangemin, rangemax, numEffectors)
@@ -24,5 +24,6 @@ function mapData = setupMap(xmin, xmax, ymin, ymax, rangemin, rangemax, numEffec
     % Spawn base at origin
     mapData.base = struct('x', [-100, 100, 100, -100], 'y', [-100, -100, 100, 100]);
 
-    % Additional map features, like no-fly zones, can be added here 
+    % Additional map features, like no-fly zones and terrain, can be added 
+    % here 
 end

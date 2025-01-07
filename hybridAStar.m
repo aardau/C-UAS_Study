@@ -1,12 +1,12 @@
 function path = hybridAStar(start, goal, map, params)
     % Inputs:
-    % - start: [x, y, θ] initial state
-    % - goal: [x, y, θ] target state
-    % - map: Occupancy grid or obstacle map
-    % - params: Parameters for the Hybrid A* algorithm (e.g., resolution, cost weights)
+    % -start: [x, y, θ] initial state
+    % -goal: [x, y, θ] target state
+    % -map: Occupancy grid or obstacle map
+    % -params: Parameters for the Hybrid A* algorithm (e.g., resolution, cost weights)
     
     % Outputs:
-    % - path: Planned path as a series of states [x, y, θ]
+    % -path: Planned path as a series of states [x, y, θ]
 
     % Initialize open and closed lists
     openList = PriorityQueue(); % Custom priority queue for A*
