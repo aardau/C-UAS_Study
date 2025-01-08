@@ -1,14 +1,7 @@
 % This function
 
-function [x, y, totalDistanceToFP] = simulateUAS(uasParameters, fixedPoint, pidTune, simParameters, map)
-    
-% % Call Hybrid A* for path planning
-%     start = [uasParameters(1), uasParameters(2), uasParameters(3)];
-%     goal = [fixedPoint(1), fixedPoint(2), 0]; % Assume 0 orientation for simplicity
-%     params = struct('resolution', 1, 'turnRadius', uasParameters(5));
-%     path = hybridAStar(start, goal, map, params);
-
-    % Follow the path using existing PID or bicycle model logic
+function [x, y, totalDistanceToFP] = simulateUAS(uasParameters, fixedPoint, pidTune, simParameters)
+    % Follow the path using PID parameters
 
     % Extract simulation parameters
     dT = simParameters(1);

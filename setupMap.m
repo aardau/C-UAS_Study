@@ -1,5 +1,4 @@
-% This function creates the various structures and environmental details
-% used in the map generation within the plotMap function
+% This function creates the various map features used in the map generation
 % Inputs:
 % -xmin: Minimum value of the map's x-direction length from zero
 % -xmax: Maximum value of the map's x-direction length from zero

@@ -8,7 +8,7 @@
 % -ymin: Minimum value of the map's y-direction length from zero
 % -ymax: Maximum value of the map's y-direction length from zero
 % Outputs:
-% -Figure of plotted map and map features
+% -Figure of plotted map with map features
 
 function plotMap(mapData, xmin, xmax, ymin, ymax)
     % Plot the map using data from setupMap
@@ -33,6 +33,6 @@ function plotMap(mapData, xmin, xmax, ymin, ymax)
     ylim([ymin, ymax]);
     xlabel('X Position (m)');
     ylabel('Y Position (m)');
-    title('Generated Map');
+    title('UAS Simulation');
     grid on;
 end
