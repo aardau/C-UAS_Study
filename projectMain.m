@@ -9,20 +9,18 @@ ymin = -2500; ymax = 2500;
 rangemin = 500; rangemax = 500;
 numEffectors = randi(3);
 
-% UAS generation parameters
+% UAS generation parameters for simulateUAS
 uasParameters = [0, 0, 70, 22, 40];
 fixedPoint = [0, 2500, 100];
 pidTune = [0.5, 0.1, 0.05];
 simParameters = [0.1, 500];
 
-%% Setup and plot map
-% Gather the map features generated in tbe setupMap function and place into a structure array
-mapData = setupMap(xmin, xmax, ymin, ymax, rangemin, rangemax, numEffectors);
-% Plot the map and map features
-plotMap(mapData, xmin, xmax, ymin, ymax);
+%% Setup the map
+% Gather the map features generated in the setupMap function and place into a structure array
+mapFeatures = setupMap(xmin, xmax, ymin, ymax, rangemin, rangemax, numEffectors);
 
-%% Setup the UAS
-[x, y, totalDistanceToFP] = simulateUAS(uasParameters, fixedPoint, pidTune, simParameters);
+%% Simulate the UAS
+[xposUAS, yposUAS, totalDistanceToFP] = simulateUAS(uasParameters, fixedPoint, pidTune, simParameters);
 
-%% Plot the UAS on the map
-plotSimulation(x, y, fixedPoint);
+%% Plot the map, map features, and UAS
+plotMap(mapFeatures, xmin, xmax, ymin, ymax, xposUAS, yposUAS, fixedPoint);

@@ -1,4 +1,16 @@
-% This function
+% This function xxxx
+
+% Inputs
+% uasParameters:
+% fixedPoint:
+% pidTune:
+% simParameters:
+
+% Outputs:
+% x: x-position of the UAS
+% y: y-position of the UAS
+% totalDistancetoFP: Total distance to the fixed point
+
 
 function [x, y, totalDistanceToFP] = simulateUAS(uasParameters, fixedPoint, pidTune, simParameters)
     % Follow the path using PID parameters
