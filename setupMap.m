@@ -17,14 +17,17 @@ function mapFeatures = setupMap(bounds, rangemin, rangemax, numEffectors)
     xmin = bounds(1); xmax = bounds(2);
     ymin = bounds(3); ymax = bounds(4);
 
-    % Setup effectors
-    mapFeatures.effectors = zeros(numEffectors, 3); %Initialize
+    % Setup static defenses
+    mapFeatures.staticDefenses = zeros(numEffectors, 3); %Initialize
     for i = 1:numEffectors
-        mapFeatures.effectors(i, 1) = randi([xmin, xmax]); % X coordinates
-        mapFeatures.effectors(i, 2) = randi([ymin, ymax]); % Y coordinates
-        mapFeatures.effectors(i, 3) = randi([rangemin, rangemax]); % Range
+        mapFeatures.staticDefenses(i, 1) = randi([xmin, xmax]); % X coordinates
+        mapFeatures.staticDefenses(i, 2) = randi([ymin, ymax]); % Y coordinates
+        mapFeatures.staticDefenses(i, 3) = randi([rangemin, rangemax]); % Range
     end
     
+    % Setup mobile defenses
+    %mapFeatures.mobileDefenses = 
+
     % Spawn base at origin
     mapFeatures.base = struct('x', [-100, 100, 100, -100], 'y', [-100, -100, 100, 100]);
 

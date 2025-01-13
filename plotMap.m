@@ -13,7 +13,7 @@
 % Outputs:
 % Figure of plotted map with map features and UAS
 
-function plotMap(mapData, bounds, xposUAS, yposUAS)
+function plotMap(mapFeatures, bounds, xposUAS, yposUAS)
     
     % Extract map bounds for calculations
     xmin = bounds(1); xmax = bounds(2);
@@ -23,17 +23,17 @@ function plotMap(mapData, bounds, xposUAS, yposUAS)
     figure;
     hold on;
 
-    % Plot effectors
-    for i = 1:size(mapData.effectors, 1)
-        x = mapData.effectors(i, 1) - mapData.effectors(i, 3):1:mapData.effectors(i, 1) + mapData.effectors(i, 3);
-        R = mapData.effectors(i, 3);
-        y1 = sqrt(R^2 - (x - mapData.effectors(i, 1)).^2) + mapData.effectors(i, 2);
-        y2 = -sqrt(R^2 - (x - mapData.effectors(i, 1)).^2) + mapData.effectors(i, 2);
+    % Plot static defenses
+    for i = 1:size(mapFeatures.staticDefenses, 1)
+        x = mapFeatures.staticDefenses(i, 1) - mapFeatures.staticDefenses(i, 3):1:mapFeatures.staticDefenses(i, 1) + mapFeatures.staticDefenses(i, 3);
+        R = mapFeatures.staticDefenses(i, 3);
+        y1 = sqrt(R^2 - (x - mapFeatures.staticDefenses(i, 1)).^2) + mapFeatures.staticDefenses(i, 2);
+        y2 = -sqrt(R^2 - (x - mapFeatures.staticDefenses(i, 1)).^2) + mapFeatures.staticDefenses(i, 2);
         plot(x, y1, x, y2);
     end
 
     % Plot base
-    base = polyshape(mapData.base.x, mapData.base.y);
+    base = polyshape(mapFeatures.base.x, mapFeatures.base.y);
     plot(base);
 
     % Plot UAS path
