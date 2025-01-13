@@ -24,12 +24,21 @@ function plotMap(mapFeatures, bounds, xposUAS, yposUAS)
     hold on;
 
     % Plot static defenses
-    for i = 1:size(mapFeatures.staticDefenses, 1)
+    for i = 1:height(mapFeatures.staticDefenses)
         x = mapFeatures.staticDefenses(i, 1) - mapFeatures.staticDefenses(i, 3):1:mapFeatures.staticDefenses(i, 1) + mapFeatures.staticDefenses(i, 3);
         R = mapFeatures.staticDefenses(i, 3);
         y1 = sqrt(R^2 - (x - mapFeatures.staticDefenses(i, 1)).^2) + mapFeatures.staticDefenses(i, 2);
         y2 = -sqrt(R^2 - (x - mapFeatures.staticDefenses(i, 1)).^2) + mapFeatures.staticDefenses(i, 2);
-        plot(x, y1, x, y2);
+        plot(x, y1, x, y2,'Color',"r");
+    end
+
+    %Plot mobile defenses
+    for j = 1:height(mapFeatures.mobileDefenses)
+        x = mapFeatures.mobileDefenses(j, 1) - mapFeatures.mobileDefenses(j, 3):1:mapFeatures.mobileDefenses(j, 1) + mapFeatures.mobileDefenses(j, 3);
+        R = mapFeatures.mobileDefenses(j, 3);
+        y1 = sqrt(R^2 - (x - mapFeatures.mobileDefenses(j, 1)).^2) + mapFeatures.mobileDefenses(j, 2);
+        y2 = -sqrt(R^2 - (x - mapFeatures.mobileDefenses(j, 1)).^2) + mapFeatures.mobileDefenses(j, 2);
+        plot(x, y1, x, y2,'Color',"b");        
     end
 
     % Plot base

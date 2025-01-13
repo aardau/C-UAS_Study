@@ -2,26 +2,35 @@
 clear; clc; close all;
 
 %% Define parameters
-% Map generation parameters
 % Allow the projectMainApp (user GUI) to change these numbers eventually
-xmin = -2500; xmax = 2500;
-ymin = -2500; ymax = 2500;
-bounds = [xmin, xmax, ymin, ymax]; % For ease of use in calling functions
-rangemin = 500; rangemax = 500;
-numEffectors = randi(3);
 
-% UAS generation parameters for SimulateUAS
-vel = 50; % Velocity (m/s)
+% Map generation parameters
+mapBounds = [-2500, 2500, -2500, 2500]; % [xmin, xmax, ymin, ymax] in arbitrary length units
+
+% Defenses generation parameters
+rangeStatic = [500, 500]; % [min,max] of detection range in arbitrary length units
+rangeMobile = [500, 500]; % [min,max] of detection range in arbitrary length units
+defenseRanges = [rangeStatic, rangeMobile]; % For saving space when writing function inputs
+
+numStaticDefenses = randi([0,3]); % Generate a random number of static defenses, including zero
+numMobileDefenses = 3 - numStaticDefenses; % Generate mobile defenses with remaining # of slots
+numDefenses = [numStaticDefenses, numMobileDefenses]; % For saving space when writing function inputs
+
+% UAS generation parameters
+vel = 50; % Velocity (units/s)
 maxTheta = 5; % Maximum turn angle (deg)
 dT = 1; % Time step (s)
 iterUAS = 1000; % # of iterations
 
-%% Setup the map
-% Gather the map features generated in the setupMap function and place into a structure array
-mapFeatures = setupMap(bounds, rangemin, rangemax, numEffectors);
+%% Setup map features
+% Generate the various map features and place into a structure array
+mapFeatures = setupMap(mapBounds, defenseRanges, numDefenses);
 
-%% Simulate the UAS
-[xposUAS, yposUAS] = simulateUAS(bounds, vel, maxTheta, dT, iterUAS);
+%% Simulate UAS
+% Simulate the UAS using bicycle kinematics and return [x,y] positions of
+% UAS track
+[xposUAS, yposUAS] = simulateUAS(mapBounds, vel, maxTheta, dT, iterUAS);
 
-%% Plot the map, map features, and UAS
-plotMap(mapFeatures, bounds, xposUAS, yposUAS);
+%% Plot
+% Plot the map, map features, and UAS track
+plotMap(mapFeatures, mapBounds, xposUAS, yposUAS);
