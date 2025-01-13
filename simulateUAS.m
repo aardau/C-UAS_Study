@@ -1,87 +1,73 @@
-% This function xxxx
+% This function generates the path of the UAS given initial defined parameters. 
+% The UAS spawns along a random edge and paths to the origin.
 
-% Inputs
-% uasParameters:
-% fixedPoint:
-% pidTune:
-% simParameters:
+% Inputs:
+% bounds: Maximum and minimum map bounds measured from zero in the form 
+%         [xmin, xmax, ymin, ymax]
+% velocity: Constant forward velocity of the UAS
+% maxTheta: Maximum turn angle in degrees
+% dT: Time step for the simulation
+% iterations: Maximum number of iterations used in loop to create UAS path
 
 % Outputs:
-% x: x-position of the UAS
-% y: y-position of the UAS
-% totalDistancetoFP: Total distance to the fixed point
+% [x, y]: Array of UAS positions over time
 
+function [x, y] = simulateUAS(bounds, velocity, maxTheta, dT, iterUAS)
+    
+    % Extract map bounds for calculations
+    xmin = bounds(1); xmax = bounds(2);
+    ymin = bounds(3); ymax = bounds(4);
 
-function [x, y, totalDistanceToFP] = simulateUAS(uasParameters, fixedPoint, pidTune, simParameters)
-    % Follow the path using PID parameters
-
-    % Extract simulation parameters
-    dT = simParameters(1);
-    iterations = simParameters(2);
-
-    % Pre-allocate variables
-    x = zeros(1, iterations);
-    y = zeros(1, iterations);
-    theta = zeros(1, iterations);
-    delta = zeros(1, iterations);
-    v = zeros(1, iterations);
-    phi = zeros(1, iterations);
-    xDistanceToFP = zeros(1, iterations);
-    yDistanceToFP = zeros(1, iterations);
-    alphaAngleToFP = zeros(1, iterations);
-    totalDistanceToFP = zeros(1, iterations);
-
-    % Initialize UAS parameters
-    x(1) = uasParameters(1);
-    y(1) = uasParameters(2);
-    theta(1) = uasParameters(3);
-    v(:) = uasParameters(4);
-    turnRadius = uasParameters(5);
-
-    % PID parameters
-    Kp = pidTune(1);
-    Ki = pidTune(2);
-    Kd = pidTune(3);
-    error_prior = 0;
-    integral_prior = 0;
+    % Choose a random edge of the map and spawn the UAS somewhere along it
+    % The initial heading is set to be perpendicular to the spawn edge
+    edge = randi(4);
+    switch edge
+        case 1 % Top edge
+            x(1) = randi([xmin, xmax]);
+            y(1) = ymax;
+            theta = -pi/2;
+        case 2 % Bottom edge
+            x(1) = randi([xmin, xmax]);
+            y(1) = ymin;
+            theta = pi/2;
+        case 3 % Left edge
+            x(1) = xmin;
+            y(1) = randi([ymin, ymax]);
+            theta = 0;
+        case 4 % Right edge
+            x(1) = xmax;
+            y(1) = randi([ymin, ymax]);
+            theta = pi;
+        otherwise % Prints warning if no case is satisfied
+            warning('Error in UAS spawning. Check simulateUAS function.')
+    end
 
     % Simulation loop
-    for i = 1:iterations
-        % Distance and angle to fixed point
-        xDistanceToFP(i) = fixedPoint(1) - x(i);
-        yDistanceToFP(i) = fixedPoint(2) - y(i);
-        alphaAngleToFP(i) = atan2d(yDistanceToFP(i), xDistanceToFP(i));
-        totalDistanceToFP(i) = sqrt(xDistanceToFP(i)^2 + yDistanceToFP(i)^2);
+    for i = 1:iterUAS
+        % Calculate angle to origin
+        thetaToTarget = atan2(0 - y(i), 0 - x(i)); %target is origin, (0,0)
         
-        % Stop if within end radius
-        if totalDistanceToFP(i) < fixedPoint(3)
-            x(i+1:end) = [];
-            y(i+1:end) = [];
-            break;
+        % Calculate the angle difference between the start and target
+        %angleDiff = wrapToPi(thetaToTarget - theta); (old method, needs toolbox)
+        angleDiff = mod((thetaToTarget - theta) + pi, 2*pi) - pi;
+
+        % Limit turn angle to maxTurnAngle
+        turnAngle = max(min(angleDiff, deg2rad(maxTheta)), -deg2rad(maxTheta));
+
+        % Update heading
+        theta = theta + turnAngle;
+
+        % Update position using bicycle kinematics
+        x(i+1) = x(i) + velocity * cos(theta) * dT;
+        y(i+1) = y(i) + velocity * sin(theta) * dT;
+
+        % Check if UAS reached the origin (within a small radius)
+        if sqrt(x(i+1)^2 + y(i+1)^2) < velocity * dT
+            x = x(1:i+1);
+            y = y(1:i+1);
+            return; % Exit simulation
         end
-
-        % PID control
-        angleDif = alphaAngleToFP(i) - theta(i);
-        integral = integral_prior + angleDif * dT;
-        derivative = (angleDif - error_prior) / dT;
-        phi(i) = Kp * angleDif + Ki * integral + Kd * derivative;
-
-        % Update errors
-        error_prior = angleDif;
-        integral_prior = integral;
-
-        % Equations of motion
-        xDot = v(i) * cosd(delta(i) + theta(i));
-        yDot = v(i) * sind(delta(i) + theta(i));
-        thetaDot = v(i) * sind(delta(i));
-        deltaDot = phi(i);
-
-        x(i+1) = x(i) + xDot * dT;
-        y(i+1) = y(i) + yDot * dT;
-        theta(i+1) = theta(i) + thetaDot * dT;
-        delta(i+1) = delta(i) + deltaDot * dT;
-
-        % Enforce turn radius limits
-        delta(i+1) = min(max(delta(i+1), -turnRadius), turnRadius);
     end
 end
+
+

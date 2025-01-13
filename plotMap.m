@@ -4,10 +4,8 @@
 % Inputs:
 % mapFeatures: Structure variable that contains the generated map features
 %               and their associated information (x-pos,y-pos,range)
-% xmin: Minimum value of the map's x-direction length from zero
-% xmax: Maximum value of the map's x-direction length from zero
-% ymin: Minimum value of the map's y-direction length from zero
-% ymax: Maximum value of the map's y-direction length from zero
+% bounds: Maximum and minimum map bounds measured from zero in the form 
+%         [xmin, xmax, ymin, ymax]
 % xposUAS: Vector containing x-positions of UAS
 % yposUAS: Vector containing y-positions of UAS
 % fixedPoint: Fixed point where UAS spawns
@@ -15,8 +13,13 @@
 % Outputs:
 % Figure of plotted map with map features and UAS
 
-function plotMap(mapData, xmin, xmax, ymin, ymax, xposUAS, yposUAS, fixedPoint)
+function plotMap(mapData, bounds, xposUAS, yposUAS)
     
+    % Extract map bounds for calculations
+    xmin = bounds(1); xmax = bounds(2);
+    ymin = bounds(3); ymax = bounds(4);
+    
+    % Plot everything in one figure
     figure;
     hold on;
 
@@ -30,13 +33,11 @@ function plotMap(mapData, xmin, xmax, ymin, ymax, xposUAS, yposUAS, fixedPoint)
     end
 
     % Plot base
-    pgon = polyshape(mapData.base.x, mapData.base.y);
-    plot(pgon);
+    base = polyshape(mapData.base.x, mapData.base.y);
+    plot(base);
 
-    % Plot UAS path on the map
+    % Plot UAS path
     plot(xposUAS, yposUAS, 'r', 'LineWidth', 2);
-    hold on;
-    plot(fixedPoint(1), fixedPoint(2), 'bs', 'MarkerSize', 10);
 
     % Adjust plot settings
     xlim([xmin, xmax]);
