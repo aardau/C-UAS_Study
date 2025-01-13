@@ -61,7 +61,7 @@ function Kinetickill = Kinetic_Neutralize(target_location, projectile_location, 
 
     % have to write in about how fast the projectile is going 
     %% refresh fire rate
-    fireRate_refreshRate = 10; %firerate timestep
+    fireRate_refreshRate = 10*dT; %firerate timestep
 
     if fireRate_refreshRate > 0
         while true
@@ -69,7 +69,7 @@ function Kinetickill = Kinetic_Neutralize(target_location, projectile_location, 
             fire_projectile = 0;
             if fireRate_refreshRate <= 0 && in_range==1
                 fire_projectile = 1;
-                fireRate_refreshRate = 10;
+                fireRate_refreshRate = 10*dT;
                 break
             end
         end
@@ -99,7 +99,7 @@ function DEW_kill = DEW_Neutralize(target_location, laser_location, energy_AOE, 
             time_to_kill=time_to_kill-1;                
             if time_to_kill<=0
                 DEW_kill=1;
-                time_to_kill=50;
+                time_to_kill=50*dT;
                 break
             
             end
