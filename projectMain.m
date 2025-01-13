@@ -18,7 +18,7 @@ numDefenses = [numStaticDefenses, numMobileDefenses]; % For saving space when wr
 
 % UAS generation parameters
 vel = 50; % Velocity (units/s)
-maxTheta = 5; % Maximum turn angle (deg)
+maxTheta = 1; % Maximum turn angle (deg)
 dT = 1; % Time step (s)
 iterUAS = 1000; % # of iterations
 
