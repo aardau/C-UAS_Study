@@ -26,7 +26,7 @@ iterUAS = 1000; % # of iterations
 
 %% Setup map features
 % Generate the various map features and place into a structure array
-mapFeatures = setupMap(mapBounds, effectorData, limits);
+mapFeatures = setupMapFile(mapBounds, effectorData, limits);
 
 %% Simulate UAS
 % Simulate the UAS using bicycle kinematics and return [x,y] positions of
