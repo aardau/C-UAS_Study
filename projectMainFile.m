@@ -33,6 +33,20 @@ mapFeatures = setupMapFile(mapBounds, effectorData, limits);
 % UAS track
 [xposUAS, yposUAS] = simulateUAS(mapBounds, vel, maxTheta, dT, iterUAS);
 
+adversaryPosition = [xposUAS; yposUAS];
+
+mDInitialPosition = mapFeatures.mobileDefenses(1, 1:2);
+
+mobileDefenseSpeed = 10;
+mobileDefensePosition = mobileDefensePathing(adversaryPosition, mDInitialPosition, mobileDefenseSpeed, dT);
+
+
 %% Plot
 % Plot the map, map features, and UAS track
 plotMap(mapFeatures, mapBounds, xposUAS, yposUAS);
+
+% TEST CODE FOR PLOTTING MOBILE DEFENSE PATH -- WILL BE ADDED TO PLOT MAP
+% AT LATER DATE
+% hold on
+% x = mobileDefensePosition(1, :); y = mobileDefensePosition(2, :);
+% plot(x, y, 'cx')
