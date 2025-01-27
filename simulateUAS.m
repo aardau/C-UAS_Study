@@ -12,7 +12,7 @@
 % Outputs:
 % [x, y]: Array of UAS positions over time
 
-function [x, y] = simulateUAS(bounds, velocity, maxTheta, dT, iterUAS)
+function adversaryPosition = simulateUAS(bounds, velocity, maxTheta, dT, iterUAS)
     
     % Extract map bounds for calculations
     xmin = bounds(1); xmax = bounds(2);
@@ -68,6 +68,7 @@ function [x, y] = simulateUAS(bounds, velocity, maxTheta, dT, iterUAS)
             return; % Exit simulation
         end
     end
+    adversaryPosition = [x; y];
 end
 
 
