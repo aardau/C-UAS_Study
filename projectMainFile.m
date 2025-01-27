@@ -33,10 +33,9 @@ mapFeatures = setupMapFile(mapBounds, effectorData, limits);
 % UAS track
 [xposUAS, yposUAS] = simulateUAS(mapBounds, vel, maxTheta, dT, iterUAS);
 
+% create single vector for position of adversary
 adversaryPosition = [xposUAS; yposUAS];
-
 mDInitialPosition = mapFeatures.mobileDefenses(1, 1:2);
-
 mobileDefenseSpeed = 10;
 mobileDefensePosition = mobileDefensePathing(adversaryPosition, mDInitialPosition, mobileDefenseSpeed, dT);
 
