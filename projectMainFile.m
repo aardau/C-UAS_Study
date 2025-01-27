@@ -10,6 +10,7 @@ mapBounds = [-2500, 2500, -2500, 2500]; % [xmin, xmax, ymin, ymax] in arbitrary 
 % effector generation parameters
 rangeMin = 100;
 rangeMax = 200;
+mobileDefenseSpeed = 10;
 
 % create limits matrix
 limits = [rangeMin, rangeMax;];
@@ -19,7 +20,7 @@ fn = "effector_inputs_RAND.xlsx";
 effectorData = readmatrix(fn);
 
 % UAS generation parameters
-vel = 50; % Velocity (units/s)
+vel = 20; % Velocity (units/s)
 maxTheta = 10; % Maximum turn angle (deg)
 dT = 1; % Time step (s)
 iterUAS = 1000; % # of iterations
@@ -33,17 +34,21 @@ mapFeatures = setupMapFile(mapBounds, effectorData, limits);
 % UAS track
 adversaryPosition = simulateUAS(mapBounds, vel, maxTheta, dT, iterUAS);
 
-% create single vector for position of adversary
+%% Mobile Defense Movement
 mDInitialPosition = mapFeatures.mobileDefenses(1, 1:2);
-mobileDefenseSpeed = 10;
 mobileDefensePosition = mobileDefensePathing(adversaryPosition, mDInitialPosition, mobileDefenseSpeed, dT);
+
+
+%% Kill Chain
+%returns new terminated flight tracks and positions of kill
+[updatedAdversaryPosition, killPoints] = killChain(adversaryPosition,mapFeatures);
 
 %% Plot
 % Plot the map, map features, and UAS track
-plotMap(mapFeatures, mapBounds, xposUAS, yposUAS);
+plotMap(mapFeatures, mapBounds, updatedAdversaryPosition, mobileDefensePosition);
 
 % TEST CODE FOR PLOTTING MOBILE DEFENSE PATH -- WILL BE ADDED TO PLOT MAP
 % AT LATER DATE
-% hold on
-% x = mobileDefensePosition(1, :); y = mobileDefensePosition(2, :);
-% plot(x, y, 'cx')
+hold on
+x = mobileDefensePosition(1, :); y = mobileDefensePosition(2, :);
+plot(x, y, 'cx')

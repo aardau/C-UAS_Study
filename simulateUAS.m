@@ -12,7 +12,7 @@
 % Outputs:
 % [x, y]: Array of UAS positions over time
 
-function adversaryPosition = simulateUAS(bounds, velocity, maxTheta, dT, iterUAS)
+function posVec = simulateUAS(bounds, velocity, maxTheta, dT, iterUAS)
     
     % Extract map bounds for calculations
     xmin = bounds(1); xmax = bounds(2);
@@ -65,10 +65,11 @@ function adversaryPosition = simulateUAS(bounds, velocity, maxTheta, dT, iterUAS
         if sqrt(x(i+1)^2 + y(i+1)^2) < velocity * dT
             x = x(1:i+1);
             y = y(1:i+1);
+            posVec = [x; y];
             return; % Exit simulation
         end
+        posVec = [x; y];
     end
-    adversaryPosition = [x; y];
 end
 
 

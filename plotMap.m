@@ -13,7 +13,7 @@
 % Outputs:
 % Figure of plotted map with map features and UAS
 
-function plotMap(mapFeatures, bounds, xposUAS, yposUAS)
+function plotMap(mapFeatures, bounds, adversaryPosition, mobileDefensePosition)
     
     % Extract map bounds for calculations
     xmin = bounds(1); xmax = bounds(2);
@@ -38,15 +38,16 @@ function plotMap(mapFeatures, bounds, xposUAS, yposUAS)
         R = mapFeatures.mobileDefenses(j, 3);
         y1 = sqrt(R^2 - (x - mapFeatures.mobileDefenses(j, 1)).^2) + mapFeatures.mobileDefenses(j, 2);
         y2 = -sqrt(R^2 - (x - mapFeatures.mobileDefenses(j, 1)).^2) + mapFeatures.mobileDefenses(j, 2);
-        plot(x, y1, x, y2,'Color',"b");        
+        plot(x, y1, x, y2,'Color',"b");
     end
+    
 
     % Plot base
     base = polyshape(mapFeatures.base.x, mapFeatures.base.y);
     plot(base);
 
     % Plot UAS path
-    plot(xposUAS, yposUAS, 'r', 'LineWidth', 2);
+    plot(adversaryPosition(1,:), adversaryPosition(2,:), 'r', 'LineWidth', 2);
 
     % Adjust plot settings
     xlim([xmin, xmax]);
