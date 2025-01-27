@@ -6,7 +6,6 @@ function killData = killChain(adversaryPosition, mapFeatures)
     for j = 1:size(mapFeatures.staticDefenses,1) %FOR EACH STATIC DEFENSE
         for i = 1:length(x) %FOR EACH POINT IN THE UAS FLIGHT PATH
             distanceToUAS = sqrt((mapFeatures.staticDefenses(j,1)-adversaryPosition(1,i))^2 + (mapFeatures.staticDefenses(j,2)-adversaryPosition(2,i))^2);
-    
             if distanceToUAS <= mapFeatures.staticDefenses(j,3)
                 disp("UAS intersect")
             end
