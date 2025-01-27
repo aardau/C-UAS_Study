@@ -31,14 +31,12 @@ mapFeatures = setupMapFile(mapBounds, effectorData, limits);
 %% Simulate UAS
 % Simulate the UAS using bicycle kinematics and return [x,y] positions of
 % UAS track
-[xposUAS, yposUAS] = simulateUAS(mapBounds, vel, maxTheta, dT, iterUAS);
+adversaryPosition = simulateUAS(mapBounds, vel, maxTheta, dT, iterUAS);
 
 % create single vector for position of adversary
-adversaryPosition = [xposUAS; yposUAS];
 mDInitialPosition = mapFeatures.mobileDefenses(1, 1:2);
 mobileDefenseSpeed = 10;
 mobileDefensePosition = mobileDefensePathing(adversaryPosition, mDInitialPosition, mobileDefenseSpeed, dT);
-
 
 %% Plot
 % Plot the map, map features, and UAS track
