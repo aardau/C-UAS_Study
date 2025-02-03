@@ -39,7 +39,7 @@ function posVec = simulateUAS(bounds, velocity, maxTheta, dT, iterUAS)
             y(1) = randi([ymin, ymax]);
             theta = pi;
         otherwise % Prints warning if no case is satisfied
-            warning('Error in UAS spawning. Check simulateUAS function.')
+            warning('Error in UAS spawning in switch cases')
     end
 
     % Simulation loop

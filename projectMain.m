@@ -24,18 +24,16 @@ effectorData = readmatrix(fn);
 % Defenses generation parameters
 rangeStatic = [500, 500]; % [min,max] of detection range in arbitrary length units
 rangeMobile = [500, 500]; % [min,max] of detection range in arbitrary length units
-defenseRanges = [rangeStatic, rangeMobile]; % For saving space when writing function inputs
 
 numMaxDefenses = 3; % Maximum number of defenses that spawn
 numStaticDefenses = randi([0,numMaxDefenses]); % Generate a random number of static defenses, including zero
 numMobileDefenses = numMaxDefenses - numStaticDefenses; % Generate mobile defenses with remaining # of slots
-numDefenses = [numStaticDefenses, numMobileDefenses]; % For saving space when writing function inputs
 
 % UAS generation parameters
 vel = 20; % Velocity (units/s)
 maxTheta = 10; % Maximum turn angle (deg)
 dT = 1; % Time step (s)
-iterUAS = 1000; % # of iterations
+iterUAS = 1000; % # of iterations for simulateUAS function
 
 %% Setup map features
 % Generate the various map features and place into a structure array

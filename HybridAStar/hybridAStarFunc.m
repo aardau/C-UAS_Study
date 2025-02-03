@@ -1,36 +1,63 @@
-function [outputArg1,outputArg2] = hybridAStarFunc(inputArg1,inputArg2)
+% Desc
 
-%% Parameter Section for Backtracking Hybrid-A*
-% Set up the workspace to run path planning algorithms
+function [outputArg1] = hybridAStarFunc(mapBounds,velocity,maxTheta,timestep)
+%%% Parameter Section for Backtracking Hybrid-A* %%%
 
-% Function input parameters
+% Extract map bounds for calculations
+xmin = mapBounds(1); xmax = mapBounds(2);
+ymin = mapBounds(3); ymax = mapBounds(4);
 
 % Vehicle parameters
-vel = 3; % Vehicle speed
-theta = 8; % Turn radius
-dT = 1; %timestep
+vel = velocity; % Vehicle speed
+theta = maxTheta; % Turn radius
+dT = timestep; %timestep
 
-% Start and Goal
-start = [0,50,0]; %test
-goal = [80,50,pi]; %test
+% Initialize start and end goal
+start = [0,0,0];
+goal = [0,0,0]; % Can keep as origin for now
 
-% Other defined parameters
-cost_discretization = 8;
+% Choose a random edge of the map to spawn the UAS
+edge = randi(4);
 
-% Conversions and quick math
-dtr = pi/180; %degrees to radians
-L = vel*dT; %step length
-dx = L; dy = L; dth = L/theta;
+switch edge
+    case 1 % Top edge
+        start(1) = randi([xmin, xmax]);
+        start(2) = ymax;
+        start(3) = -pi/2;
+        goal(3) = start(3); % Keep goal heading as start heading
+    case 2 % Bottom edge
+        start(1) = randi([xmin, xmax]);
+        start(2) = ymin;
+        start(3) = pi/2;
+        goal(3) = start(3); % Keep goal heading as start heading
+    case 3 % Left edge
+        start(1) = xmin;
+        start(2) = randi([ymin, ymax]);
+        start(3) = 0;
+        goal(3) = start(3); % Keep goal heading as start heading
+    case 4 % Right edge
+        start(1) = xmax;
+        start(2) = randi([ymin, ymax]);
+        start(3) = pi;
+        goal(3) = start(3); % Keep goal heading as start heading
+    otherwise % Prints warning if no case is satisfied
+        warning('Error in UAS spawning from switch cases')
+end
 
 % Define the domain
 N = 3;  %number of dimensions
 %domain size, in search coords
-domain = [0 100; 0, 100; 0, 2*pi]; % [xmap length, ymap length, startangle]
+domain = [xmin, xmax; ymin, ymax; 0, 2*pi]; % [xmap length, ymap length, startangle]
 
-%plot the domain
-figure(1);
-drawdomain(domain, 'k', N);
-hold on;
+% Other defined function items
+cost_discretization = 8;
+L = vel*dT; %step length
+dx = L; dy = L; dth = L/theta;
+
+% %plot the domain
+% figure(1);
+% drawdomain(mapBounds, 'k', N);
+% hold on;
 
 %%% Obstacles
 
@@ -262,21 +289,20 @@ end
 fprintf("Terminal Cost: %f\n", current.cost);
 fprintf("Runtime: %f s\n", runtime);
 
-%% Drawdomain function
-
-function drawdomain(domain, lnt, lnw)
-
-    xmin = domain(1,1);
-    xmax = domain(1,2);
-    ymin = domain(2,1);
-    ymax = domain(2,2);
-
-    plot([xmin xmax], [ymin ymin], num2str(lnt), 'linewidth', lnw); 
-    hold on;
-    plot([xmax xmax], [ymin ymax], num2str(lnt), 'linewidth', lnw);
-    plot([xmax xmin], [ymax ymax], num2str(lnt), 'linewidth', lnw);
-    plot([xmin xmin], [ymax ymin], num2str(lnt), 'linewidth', lnw);
-end
+% %% Drawdomain function
+% 
+%     function drawdomain(mapBounds, lnt, lnw)
+% 
+% % Extract map bounds for calculations
+%     xmin = mapBounds(1); xmax = mapBounds(2);
+%     ymin = mapBounds(3); ymax = mapBounds(4);
+% 
+%     plot([xmin xmax], [ymin ymin], num2str(lnt), 'linewidth', lnw); 
+%     hold on;
+%     plot([xmax xmax], [ymin ymax], num2str(lnt), 'linewidth', lnw);
+%     plot([xmax xmin], [ymax ymax], num2str(lnt), 'linewidth', lnw);
+%     plot([xmin xmin], [ymax ymin], num2str(lnt), 'linewidth', lnw);
+% end
 
 %% Drawaction function
 
