@@ -1,13 +1,13 @@
 % Desc
 
-function [outputArg1] = hybridAStarFunc(mapBounds,velocity,maxTheta,timestep)
+function [path] = hybridAStarFunc(mapBounds,mapFeatures, velocity,maxTheta,timestep)
 %%% Parameter Section for Backtracking Hybrid-A* %%%
 
 % Extract map bounds for calculations
 xmin = mapBounds(1); xmax = mapBounds(2);
 ymin = mapBounds(3); ymax = mapBounds(4);
 
-% Vehicle parameters
+% Vehicle parameters (unnecessary to redefine but notes their existence)
 vel = velocity; % Vehicle speed
 theta = maxTheta; % Turn radius
 dT = timestep; %timestep
@@ -18,7 +18,6 @@ goal = [0,0,0]; % Can keep as origin for now
 
 % Choose a random edge of the map to spawn the UAS
 edge = randi(4);
-
 switch edge
     case 1 % Top edge
         start(1) = randi([xmin, xmax]);
@@ -49,46 +48,31 @@ N = 3;  %number of dimensions
 %domain size, in search coords
 domain = [xmin, xmax; ymin, ymax; 0, 2*pi]; % [xmap length, ymap length, startangle]
 
-% Other defined function items
+% Other defined variables for function
 cost_discretization = 8;
 L = vel*dT; %step length
 dx = L; dy = L; dth = L/theta;
 
-% %plot the domain
-% figure(1);
-% drawdomain(mapBounds, 'k', N);
-% hold on;
-
-%%% Obstacles
-
-%Obstacles
-obstacles = struct();
-obstacles.number = 3;
-obstacles.type = 1; % AABB - 0, Closed Polygon - 1
-obstacles.vertices{1} = [20,30; 40,50; 30,90; 25,85];
-obstacles.vertices{2} = [50,25; 80,25; 80,45; 50,40]; 
-obstacles.vertices{3} = [11,2; 11,20; 37 30; 39 2];
-
-% Plot the obstacles
-plot_obstacles(obstacles, figure(1));
+% Define the obstacles from the mapFeatures structure variable
+obstacles = mapFeatures.obstacles;
 
 %spatial cost function
 costfunc = @(x,y) vel;
 
-%%%Set up the grid: note: the start location snaps on to the grid, but the
-%%%goal location has no guarantee of doing so.
-%X--
+% Set up the grid: note: the start location snaps on to the grid, but the 
+% goal location has no guarantee of doing so.
+% X--
 grid_x_left = start(1):-dx:domain(1,1);
 grid_x_right = start(1):dx:domain(1,2);
 grid_x = [fliplr(grid_x_left), grid_x_right(2:end)];
 LX = length(grid_x);
-%Y--
+%Y --
 grid_y_down = start(2):-dy:domain(2,1);
 grid_y_up = start(2):dy:domain(2,2);
 grid_y = [fliplr(grid_y_down), grid_y_up(2:end)];
 LY = length(grid_y);
 
-%%%THETA--
+% THETA--
 grid_th_down = start(3):-dth:domain(3,1);
 grid_th_up = start(3):dth:domain(3,2);
 grid_th = [fliplr(grid_th_down), grid_th_up(2:end)];
@@ -98,6 +82,11 @@ domain = [ grid_x(1) grid_x(LX); grid_y(1) grid_y(LY); grid_th(1) grid_th(LTH)];
 
 %%%Compute Start and Goal Index
 start_index = [length(grid_x_left), length(grid_y_down), length(grid_th_down)];
+
+% Debug the start and goal index
+fprintf("Start index: %d\n", start_index);
+fprintf("Goal index: %d\n", start_index);
+
 
 [~, g_ind_x] = min(abs(grid_x - goal(1)));
 [~, g_ind_y] = min(abs(grid_y - goal(2)));
@@ -179,6 +168,9 @@ while ~isempty(frontier.cost)
     frontier.parent = frontier.parent(2:end);
     frontier.action = frontier.action(2:end);
     
+    % Debug current.idx
+    %fprintf("Current idx: %d\n", current.idx);
+
     %pop the node if it has been visited
     if visited(current.idx) == 1
         continue;
@@ -288,21 +280,6 @@ end
 
 fprintf("Terminal Cost: %f\n", current.cost);
 fprintf("Runtime: %f s\n", runtime);
-
-% %% Drawdomain function
-% 
-%     function drawdomain(mapBounds, lnt, lnw)
-% 
-% % Extract map bounds for calculations
-%     xmin = mapBounds(1); xmax = mapBounds(2);
-%     ymin = mapBounds(3); ymax = mapBounds(4);
-% 
-%     plot([xmin xmax], [ymin ymin], num2str(lnt), 'linewidth', lnw); 
-%     hold on;
-%     plot([xmax xmax], [ymin ymax], num2str(lnt), 'linewidth', lnw);
-%     plot([xmax xmin], [ymax ymax], num2str(lnt), 'linewidth', lnw);
-%     plot([xmin xmin], [ymax ymin], num2str(lnt), 'linewidth', lnw);
-% end
 
 %% Drawaction function
 
@@ -549,26 +526,6 @@ function [cost] = integrate_cost(candpath, speed, cost_func)
         cost = cost + dc*dt;
     end
     
-end
-
-%% plot_obstacles function
-
-function plot_obstacles(obstacles, figHandle)
-figure(figHandle)
-hold on
-
-xO = [];
-yO = [];
-
-if( obstacles.number > 0 )
-    for k = 1:obstacles.number
-        xO = [xO;obstacles.vertices{k}(:,1); obstacles.vertices{k}(1,1);NaN];
-        yO = [yO;obstacles.vertices{k}(:,2); obstacles.vertices{k}(1,2);NaN];
-        fill(obstacles.vertices{k}(:,1), obstacles.vertices{k}(:,2), 'k');
-    end
-    
-    plot(xO,yO, 'Color', [0.2, 0.2, 1], 'LineWidth',2)
-end
 end
 
 end

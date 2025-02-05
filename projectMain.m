@@ -22,35 +22,37 @@ effectorData = readmatrix(fn);
 
 % Generation parameters for setupMap (old)
 % Defenses generation parameters
-rangeStatic = [500, 500]; % [min,max] of detection range in arbitrary length units
-rangeMobile = [500, 500]; % [min,max] of detection range in arbitrary length units
+rangeStatic = 200; % [min,max] of detection range in arbitrary length units
+rangeMobile = 100; % [min,max] of detection range in arbitrary length units
+defenseRanges = [rangeStatic, rangeMobile]; % For funcion inputs
 
 numMaxDefenses = 3; % Maximum number of defenses that spawn
 numStaticDefenses = randi([0,numMaxDefenses]); % Generate a random number of static defenses, including zero
 numMobileDefenses = numMaxDefenses - numStaticDefenses; % Generate mobile defenses with remaining # of slots
 
-% UAS generation parameters
+% UAS parameters
 vel = 20; % Velocity (units/s)
 maxTheta = 10; % Maximum turn angle (deg)
 dT = 1; % Time step (s)
-iterUAS = 1000; % # of iterations for simulateUAS function
 
 %% Setup map features
 % Generate the various map features and place into a structure array
 mapFeatures = setupMapFile(mapBounds, effectorData, limits);
 
-%% Simulate UAS
-% Simulate the UAS using bicycle kinematics and return [x,y] positions of
-% UAS track
-adversaryPosition = simulateUAS(mapBounds, vel, maxTheta, dT, iterUAS);
+%% Run Hybrid A*
+% Generate UAS path using a Hybrid A* path planning algorithm
+uasPath = hybridAStarFunc(mapBounds, mapFeatures, vel, maxTheta, dT);
+
+% Extract the (x,y) coordinates from uasPath for use in other functions
+uasPosition = [uasPath(1:end,1), uasPath(1:end,2)];
 
 %% Mobile Defense Movement
 mDInitialPosition = mapFeatures.mobileDefenses(1, 1:2);
-mobileDefensePosition = mobileDefensePathing(adversaryPosition, mDInitialPosition, mobileDefenseSpeed, dT);
+mobileDefensePosition = mobileDefensePathing(uasPosition, mDInitialPosition, mobileDefenseSpeed, dT);
 
 %% Kill Chain
 %returns new terminated flight tracks and positions of kill
-[updatedAdversaryPosition, killPoints] = killChain(adversaryPosition,mapFeatures);
+[updatedAdversaryPosition, killPoints] = killChain(uasPosition, mapFeatures);
 
 %% Plot
 % Plot the map, map features, and UAS track

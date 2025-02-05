@@ -41,7 +41,7 @@ function mapFeatures = setupMapFile(mapBounds, effectorData, limits)
     end
 
     % calculate static vs. mobile number
-    numMobileDefenses = sum(effectorData(:, 4));
+    numMobileDefenses = sum(effectorData(:, 4), 'omitnan'); % Ignore NaN values
     numStaticDefenses = height(effectorData) - numMobileDefenses;
 
     % create indexes for static + mobile defenses
@@ -64,25 +64,17 @@ function mapFeatures = setupMapFile(mapBounds, effectorData, limits)
         end
     end
 
-%     % Setup static defenses
-%     mapFeatures.staticDefenses = zeros(numStaticDefenses, 3); %Initialize
-%     for i = 1:height(mapFeatures.staticDefenses)
-%         mapFeatures.staticDefenses(i, 1) = effectorData(i, 1);
-%         mapFeatures.staticDefenses(i, 2) = randi([ymin, ymax]); % Y coordinate(s)
-%         mapFeatures.staticDefenses(i, 3) = randi([rangeminStatic, rangemaxStatic]); % Range
-%     end
-%     
-%     % Setup mobile defenses
-%     mapFeatures.mobileDefenses = zeros(numMobileDefenses, 3); %Initialize
-%     for j = 1:height(mapFeatures.mobileDefenses)
-%         mapFeatures.mobileDefenses(j, 1) = randi([xmin, xmax]); % X coordinate(s)
-%         mapFeatures.mobileDefenses(j, 2) = randi([ymin, ymax]); % Y coordinate(s)
-%         mapFeatures.mobileDefenses(j, 3) = randi([rangeminMobile, rangemaxMobile]); % Range
-%     end
-
     % Spawn base at origin
     mapFeatures.base = struct('x', [-500, 500, 500, -500], 'y', [-500, -500, 500, 500]);
 
+    % Define obstacles for the Hybrid A* path planning model to path around
+    mapFeatures.obstacles.number = 3;
+    mapFeatures.obstacles.type = 1; % 0 = AABB, 1 = Polygon --> Keep as 1 
+    mapFeatures.obstacles.vertices{1} = [20,30; 40,50; 30,90; 25,85];
+    mapFeatures.obstacles.vertices{2} = [50,25; 80,25; 80,45; 50,40]; 
+    mapFeatures.obstacles.vertices{3} = [11,2; 11,20; 37 30; 39 2];
+    
+    
     % Additional map features, like no-fly zones and terrain, can be added 
     % here. Don't forget to write it as a structure var!
 end
