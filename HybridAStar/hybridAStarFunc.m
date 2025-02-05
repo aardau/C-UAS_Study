@@ -22,7 +22,7 @@ switch edge
     case 1 % Top edge
         start(1) = randi([xmin, xmax]);
         start(2) = ymax;
-        start(3) = -pi/2;
+        start(3) = 3*pi/2;
         goal(3) = start(3); % Keep goal heading as start heading
     case 2 % Bottom edge
         start(1) = randi([xmin, xmax]);
@@ -47,7 +47,6 @@ end
 N = 3;  %number of dimensions
 %domain size, in search coords
 domain = [xmin, xmax; ymin, ymax; 0, 2*pi]; % [xmap length, ymap length, startangle]
-
 % Other defined variables for function
 cost_discretization = 8;
 L = vel*dT; %step length
@@ -66,6 +65,7 @@ grid_x_left = start(1):-dx:domain(1,1);
 grid_x_right = start(1):dx:domain(1,2);
 grid_x = [fliplr(grid_x_left), grid_x_right(2:end)];
 LX = length(grid_x);
+
 %Y --
 grid_y_down = start(2):-dy:domain(2,1);
 grid_y_up = start(2):dy:domain(2,2);
@@ -82,11 +82,6 @@ domain = [ grid_x(1) grid_x(LX); grid_y(1) grid_y(LY); grid_th(1) grid_th(LTH)];
 
 %%%Compute Start and Goal Index
 start_index = [length(grid_x_left), length(grid_y_down), length(grid_th_down)];
-
-% Debug the start and goal index
-fprintf("Start index: %d\n", start_index);
-fprintf("Goal index: %d\n", start_index);
-
 
 [~, g_ind_x] = min(abs(grid_x - goal(1)));
 [~, g_ind_y] = min(abs(grid_y - goal(2)));
@@ -121,8 +116,6 @@ goal_index = goal_indexc;
 
 %plot output
 plot_steps = 2;
-
-fprintf("Parameters Set, Running Search \n\n");
 
 %% Backtracking Hybrid A* Graph Search
 
@@ -167,9 +160,6 @@ while ~isempty(frontier.cost)
     frontier.node = frontier.node(2:end, :);
     frontier.parent = frontier.parent(2:end);
     frontier.action = frontier.action(2:end);
-    
-    % Debug current.idx
-    %fprintf("Current idx: %d\n", current.idx);
 
     %pop the node if it has been visited
     if visited(current.idx) == 1
@@ -278,8 +268,8 @@ if (plot_steps > 0) && (reached_goal == true)
     end
 end
 
-fprintf("Terminal Cost: %f\n", current.cost);
-fprintf("Runtime: %f s\n", runtime);
+%fprintf("Terminal Cost: %f\n", current.cost);
+fprintf("Hybrid A* Runtime: %f s\n", runtime);
 
 %% Drawaction function
 
@@ -473,8 +463,8 @@ function [actions] = get_actions_kinem(current, L, R, grid_x, grid_y, grid_th)
         Cxdn + R*sin(-newangle_down), Cydn + R*cos(-newangle_down), mod(newangle_down, 2*pi)];    
 
     actions.newindex = zeros(3,3);
-    LX = length(grid_x);
-    LY = length(grid_y);
+    LX_kinem = length(grid_x);
+    LY_kinem = length(grid_y);
     
     for i = 1:3
         location = actions.newlocation(i,:);
@@ -483,7 +473,7 @@ function [actions] = get_actions_kinem(current, L, R, grid_x, grid_y, grid_th)
         [~, xpmin] = min(xdiff);
         if xpmin == 1 &&  (grid_x(1) >  location(1))
             actions.newindex(i,1) = -inf;    %driven off the domain
-        elseif xpmin == LX &&  (grid_x(LX) <  location(1))
+        elseif xpmin == LX_kinem &&  (grid_x(LX_kinem) <  location(1))
             actions.newindex(i,1) = +inf;  %driven off the domain
         else
             actions.newindex(i,1) = xpmin;
@@ -493,7 +483,7 @@ function [actions] = get_actions_kinem(current, L, R, grid_x, grid_y, grid_th)
         [~, ypmin] = min(ydiff);
         if ypmin == 1 &&  (grid_y(1) >  location(2))
             actions.newindex(i,2) = -inf;    %driven off the domain
-        elseif ypmin == LY &&  (grid_y(LY) <  location(2))
+        elseif ypmin == LY_kinem &&  (grid_y(LY_kinem) <  location(2))
             actions.newindex(i,2) = inf;  %driven off the domain
         else
             actions.newindex(i,2) = ypmin;        
@@ -507,7 +497,7 @@ function [actions] = get_actions_kinem(current, L, R, grid_x, grid_y, grid_th)
 
     %%%obtain cumulative index
     for i = 1:3
-        actions.newindexc(i) = (actions.newindex(i,3) - 1)*LX*LY + (actions.newindex(i,2) - 1)*LX + actions.newindex(i,1);
+        actions.newindexc(i) = (actions.newindex(i,3) - 1)*LX_kinem*LY_kinem + (actions.newindex(i,2) - 1)*LX_kinem + actions.newindex(i,1);
     end
 
 end
