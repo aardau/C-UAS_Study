@@ -47,7 +47,7 @@ function plotMap(mapFeatures, bounds, adversaryPosition, mobileDefensePosition)
     plot(base);
 
     % Plot UAS path
-    plot(adversaryPosition(1,:), adversaryPosition(2,:), 'r', 'LineWidth', 2);
+    %plot(adversaryPosition(1,:), adversaryPosition(2,:), 'r', 'LineWidth', 2);
 
     % Plot map obstacles
     obstacles = mapFeatures.obstacles;  % Extract obstacles from mapFeatures

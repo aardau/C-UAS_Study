@@ -70,9 +70,9 @@ function mapFeatures = setupMapFile(mapBounds, effectorData, limits)
     % Define obstacles for the Hybrid A* path planning model to path around
     mapFeatures.obstacles.number = 3;
     mapFeatures.obstacles.type = 1; % 0 = AABB, 1 = Polygon --> Keep as 1 
-    mapFeatures.obstacles.vertices{1} = [20,30; 40,50; 30,90; 25,85];
-    mapFeatures.obstacles.vertices{2} = [50,25; 80,25; 80,45; 50,40]; 
-    mapFeatures.obstacles.vertices{3} = [11,2; 11,20; 37 30; 39 2];
+    mapFeatures.obstacles.vertices{1} = [-1500,1500; -1000,1000; -1000,500; -1500,0];
+    mapFeatures.obstacles.vertices{2} = [-1750,-1250; 750,-1250; 750,-1500; -1750,-1500]; 
+    mapFeatures.obstacles.vertices{3} = [750,2000; 750,1000; 1250,-500; 1250,1500];
     
     
     % Additional map features, like no-fly zones and terrain, can be added 
