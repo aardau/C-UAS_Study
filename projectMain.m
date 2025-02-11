@@ -17,7 +17,7 @@ mobileDefenseSpeed = 10;
 limits = [rangeMin, rangeMax;];
 
 % specify file name for input
-fn = "effector_inputs_RAND.xlsx";
+fn = "effector_inputs.xlsx";
 effectorData = readmatrix(fn);
 
 % Generation parameters for setupMap (old)
@@ -26,7 +26,7 @@ rangeStatic = 200; % [min,max] of detection range in arbitrary length units
 rangeMobile = 100; % [min,max] of detection range in arbitrary length units
 defenseRanges = [rangeStatic, rangeMobile]; % For funcion inputs
 
-numMaxDefenses = 3; % Maximum number of defenses that spawn
+numMaxDefenses = height(effectorData); % Maximum number of defenses that spawn
 numStaticDefenses = randi([0,numMaxDefenses]); % Generate a random number of static defenses, including zero
 numMobileDefenses = numMaxDefenses - numStaticDefenses; % Generate mobile defenses with remaining # of slots
 
@@ -47,8 +47,15 @@ uasPath = hybridAStarFunc(mapBounds, mapFeatures, vel, maxTheta, dT);
 uasPosition = [uasPath(1:end,1), uasPath(1:end,2)];
 
 %% Mobile Defense Movement
-mDInitialPosition = mapFeatures.mobileDefenses(1, 1:2);
+% select closest defense
+if height(mapFeatures.mobileDefenses) > 0
+selectedMobileDefense = mobileDefenseSelection(height(mapFeatures.mobileDefenses), mapFeatures.mobileDefenses, uasPosition);
+mDInitialPosition = mapFeatures.mobileDefenses(selectedMobileDefense, 1:2);
 mobileDefensePosition = mobileDefensePathing(uasPosition, mDInitialPosition, mobileDefenseSpeed, dT);
+else
+    mobileDefensePosition = [NaN, NaN];
+end
+
 
 %% Kill Chain
 %returns new terminated flight tracks and positions of kill
@@ -59,7 +66,8 @@ mobileDefensePosition = mobileDefensePathing(uasPosition, mDInitialPosition, mob
 plotMap(mapFeatures, mapBounds, updatedAdversaryPosition, mobileDefensePosition);
 
 % TEST CODE FOR PLOTTING MOBILE DEFENSE PATH -- WILL BE ADDED TO PLOT MAP
-% AT LATER DATE
+% AT LATER DATE -- SOMETIMES GIVES ERROR BC NO MOBILE DEFENSES WERE
+% GENERATED
 hold on
 x = mobileDefensePosition(1, :); y = mobileDefensePosition(2, :);
 plot(x, y, 'cx')

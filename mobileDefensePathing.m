@@ -10,6 +10,9 @@ for i = 1:length(adversaryPosition)
     adversaryPosition(3, i) = 0+dT*(i-1);
 end
 
+% select nearest mobile defense
+
+
 defensePosition(:, 1) = initialDefensePosition;
 for i = 1:(length(adversaryPosition)-1)
     ydif = adversaryPosition(2, i)-defensePosition(2, i);
