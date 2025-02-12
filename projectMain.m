@@ -31,9 +31,13 @@ numStaticDefenses = randi([0,numMaxDefenses]); % Generate a random number of sta
 numMobileDefenses = numMaxDefenses - numStaticDefenses; % Generate mobile defenses with remaining # of slots
 
 % UAS parameters
-vel = 20; % Velocity (units/s)
-maxTheta = 10; % Maximum turn angle (deg)
-dT = 1; % Time step (s)
+velUAS = 20; % Velocity (units/s)
+maxThetaUAS = 10; % Maximum turn angle (deg)
+dT = 1; % Time step (s) (Don't change to 0.1, it takes too long to compute HA*)
+
+% Mobile Defense parameters
+velMD = 5; % Velocity, (units/s)
+maxThetaMD = 360; % Maximum turn angle (deg), setting to 360deg makes the vehicle behave closer to A* path finding
 
 %% Setup map features
 % Generate the various map features and place into a structure array
@@ -41,10 +45,10 @@ mapFeatures = setupMapFile(mapBounds, effectorData, limits);
 
 %% Run Hybrid A*
 % Generate UAS path using a Hybrid A* path planning algorithm
-uasPath = hybridAStarFunc(mapBounds, mapFeatures, vel, maxTheta, dT);
+uasPath = hybridAStarFunc(mapBounds, mapFeatures, velUAS, maxThetaUAS, dT);
 
 % Extract the (x,y) coordinates from uasPath for use in other functions
-uasPosition = [uasPath(1:end,1), uasPath(1:end,2)];
+uasPosition = [uasPath(:,1), uasPath(:,2)];
 
 %% Mobile Defense Movement
 mDInitialPosition = mapFeatures.mobileDefenses(1, 1:2);
