@@ -17,7 +17,7 @@ mobileDefenseSpeed = 10;
 limits = [rangeMin, rangeMax;];
 
 % specify file name for input
-fn = "effector_inputs.xlsx";
+fn = "effector_inputs_RAND.xlsx";
 effectorData = readmatrix(fn);
 
 % Generation parameters for setupMap (old)
