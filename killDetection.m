@@ -1,5 +1,7 @@
 function [SDHits, MDHits] = killDetection(mapFeatures,uasPoints, mobileDefensePoints, SMD)
-%UNTITLED3 Summary of this function goes here
+%The function takes in map features, the x-y pairs of the UAS, and x-y
+%pairs of the mobile defense, as well as which mobile defense is moving
+%towards the UAS to determine when the UAS is in range of each defense.
 %   Detailed explanation goes here
 
 SDHits = zeros(height(uasPoints), height(mapFeatures.staticDefenses));

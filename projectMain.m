@@ -16,8 +16,12 @@ mobileDefenseSpeed = 10;
 % create limits matrix
 limits = [rangeMin, rangeMax;];
 
+% kill chain parameters
+trackProbability = 0.5;
+killProbability = 0.9;
+
 % specify file name for input
-fn = "effector_inputs.xlsx"; % all static, lots of randomization
+fn = "effector_inputs_RAND.xlsx"; % all static, lots of randomization
 %fn = "effector_inputs_SPECIFIED.xlsx"; % entirely specified starting condition, 3S 2M
 %fn = "effector_inputs_RAND.xlsx"; % entirely randomized setup
 effectorData = readmatrix(fn);
@@ -64,15 +68,15 @@ else
     selectedMobileDefense = NaN;
 end
 
-
 %% Kill Chain
 %returns new terminated flight tracks and positions of kill
 %[updatedAdversaryPosition, killPoints] = killChain(uasPosition, mapFeatures);
 [SDHits, MDHits] = killDetection(mapFeatures, uasPosition, mobileDefensePosition, selectedMobileDefense);
-updatedAdversaryPosition = uasPosition;
+[killVar, killTime] = killCheck(SDHits, MDHits, trackProbability, killProbability, mapFeatures, uasPosition);
 
 %% Plot
 % Plot the map, map features, and UAS track
+updatedAdversaryPosition = uasPosition(1:killTime, :);
 plotMap(mapFeatures, mapBounds, updatedAdversaryPosition, mobileDefensePosition);
 
 % TEST CODE FOR PLOTTING MOBILE DEFENSE PATH -- WILL BE ADDED TO PLOT MAP

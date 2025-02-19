@@ -1,9 +1,8 @@
 function [defensePosition] = mobileDefensePathing(adversaryPosition, initialDefensePosition, mobileDefenseSpeed, dT)
 %Path planning for mobile defenses
-%   Currently, whatever mobile defense is first in the struct moves
-%   linearly towards the current location of the UAS. Needs work to allow
-%   'intellegent' targeting of which mobile defense goes and which UAS it
-%   targets if there are multiple.
+%   Currently whatever mobile defense is closest to the 'breach' is
+%   selected for movement towards the UAS. Currently moves linearly towards
+%   the UAS's current position.
 
 % create time vector
 for i = 1:length(adversaryPosition)
