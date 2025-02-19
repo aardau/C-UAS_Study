@@ -14,7 +14,7 @@ dT = timestep; %timestep
 
 % Initialize start and end goal
 start = [0,0,0];
-goal = [0,0,0]; % Can keep as origin for now
+goal = [0,0,0]; 
 
 % Choose a random edge of the map to spawn the UAS
 edge = randi(4);
@@ -23,25 +23,54 @@ switch edge
         start(1) = randi([xmin, xmax]);
         start(2) = ymax;
         start(3) = 3*pi/2;
-        goal(3) = start(3); % Keep goal heading as start heading
+        goal(3) = start(3); % Keep the same heading as the start
     case 2 % Bottom edge
         start(1) = randi([xmin, xmax]);
         start(2) = ymin;
         start(3) = pi/2;
-        goal(3) = start(3); % Keep goal heading as start heading
+        goal(3) = start(3); % Keep the same heading as the start
     case 3 % Left edge
         start(1) = xmin;
         start(2) = randi([ymin, ymax]);
         start(3) = 0;
-        goal(3) = start(3); % Keep goal heading as start heading
+        goal(3) = start(3); % Keep the same heading as the start
     case 4 % Right edge
         start(1) = xmax;
         start(2) = randi([ymin, ymax]);
         start(3) = pi;
-        goal(3) = start(3); % Keep goal heading as start heading
+        goal(3) = start(3); % Keep the same heading as the start
     otherwise % Prints warning if no case is satisfied
         warning('Error in UAS spawning from switch cases')
 end
+
+% % Extract base boundaries for goal determination
+% baseXmin = min(mapFeatures.base.x);
+% baseXmax = max(mapFeatures.base.x);
+% baseYmin = min(mapFeatures.base.y);
+% baseYmax = max(mapFeatures.base.y);
+% 
+% % Choose a random edge of the base perimeter to be the goal
+% baseEdge = randi(4);
+% switch baseEdge
+%     case 1 % Top edge
+%         goal(1) = randi([baseXmin, baseXmax]);
+%         goal(2) = baseYmax;
+%         goal(3) = start(3); % Keep the same heading as the start
+%     case 2 % Bottom edge
+%         goal(1) = randi([baseXmin, baseXmax]);
+%         goal(2) = baseYmin;
+%         goal(3) = start(3); % Keep the same heading as the start
+%     case 3 % Left edge
+%         goal(1) = baseXmin;
+%         goal(2) = randi([baseYmin, baseYmax]);
+%         goal(3) = start(3); % Keep the same heading as the start
+%     case 4 % Right edge
+%         goal(1) = baseXmax;
+%         goal(2) = randi([baseYmin, baseYmax]);
+%         goal(3) = start(3); % Keep the same heading as the start
+%     otherwise % Prints warning if no case is satisfied
+%         warning('Error in base goal assignment from switch cases');
+% end
 
 % Define the domain
 N = 3;  %number of dimensions

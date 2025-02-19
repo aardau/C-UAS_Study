@@ -41,7 +41,7 @@ function mapFeatures = setupMapFile(mapBounds, effectorData, limits)
     end
 
     % calculate static vs. mobile number
-    numMobileDefenses = sum(effectorData(:, 4), 'omitnan'); % Ignore NaN values
+    numMobileDefenses = sum(effectorData(:, 4)) % Ignore NaN values
     numStaticDefenses = height(effectorData) - numMobileDefenses;
 
     % create indexes for static + mobile defenses
