@@ -9,15 +9,17 @@ mapBounds = [-2500, 2500, -2500, 2500]; % [xmin, xmax, ymin, ymax] in arbitrary 
 
 % Generation parameters for setupMapFile (current)
 % effector generation parameters
-rangeMin = 100;
-rangeMax = 200;
+rangeMin = 500;
+rangeMax = 1000;
 mobileDefenseSpeed = 10;
 
 % create limits matrix
 limits = [rangeMin, rangeMax;];
 
 % specify file name for input
-fn = "effector_inputs_RAND.xlsx";
+fn = "effector_inputs.xlsx"; % all static, lots of randomization
+%fn = "effector_inputs_SPECIFIED.xlsx"; % entirely specified starting condition, 3S 2M
+%fn = "effector_inputs_RAND.xlsx"; % entirely randomized setup
 effectorData = readmatrix(fn);
 
 % Generation parameters for setupMap (old)
@@ -27,8 +29,9 @@ rangeMobile = 100; % [min,max] of detection range in arbitrary length units
 defenseRanges = [rangeStatic, rangeMobile]; % For funcion inputs
 
 numMaxDefenses = height(effectorData); % Maximum number of defenses that spawn
-numStaticDefenses = randi([0,numMaxDefenses]); % Generate a random number of static defenses, including zero
-numMobileDefenses = numMaxDefenses - numStaticDefenses; % Generate mobile defenses with remaining # of slots
+% currently unused variables
+%numStaticDefenses = randi([0,numMaxDefenses]); % Generate a random number of static defenses, including zero
+%numMobileDefenses = numMaxDefenses - numStaticDefenses; % Generate mobile defenses with remaining # of slots
 
 % UAS parameters
 velUAS = 20; % Velocity (units/s)
@@ -58,12 +61,15 @@ mDInitialPosition = mapFeatures.mobileDefenses(selectedMobileDefense, 1:2);
 mobileDefensePosition = mobileDefensePathing(uasPosition, mDInitialPosition, mobileDefenseSpeed, dT);
 else
     mobileDefensePosition = [NaN, NaN];
+    selectedMobileDefense = NaN;
 end
 
 
 %% Kill Chain
 %returns new terminated flight tracks and positions of kill
-[updatedAdversaryPosition, killPoints] = killChain(uasPosition, mapFeatures);
+%[updatedAdversaryPosition, killPoints] = killChain(uasPosition, mapFeatures);
+[SDHits, MDHits] = killDetection(mapFeatures, uasPosition, mobileDefensePosition, selectedMobileDefense);
+updatedAdversaryPosition = uasPosition;
 
 %% Plot
 % Plot the map, map features, and UAS track
@@ -73,5 +79,5 @@ plotMap(mapFeatures, mapBounds, updatedAdversaryPosition, mobileDefensePosition)
 % AT LATER DATE -- SOMETIMES GIVES ERROR BC NO MOBILE DEFENSES WERE
 % GENERATED
 hold on
-x = mobileDefensePosition(1, :); y = mobileDefensePosition(2, :);
+x = mobileDefensePosition(:, 1); y = mobileDefensePosition(:, 2);
 plot(x, y, 'cx')

@@ -7,20 +7,17 @@ function [defensePosition] = mobileDefensePathing(adversaryPosition, initialDefe
 
 % create time vector
 for i = 1:length(adversaryPosition)
-    adversaryPosition(3, i) = 0+dT*(i-1);
+    adversaryPosition(i, 3) = 0+dT*(i-1);
 end
 
-% select nearest mobile defense
-
-
-defensePosition(:, 1) = initialDefensePosition;
+defensePosition(1, :) = initialDefensePosition;
 for i = 1:(length(adversaryPosition)-1)
-    ydif = adversaryPosition(2, i)-defensePosition(2, i);
-    xdif = adversaryPosition(1, i)-defensePosition(1, i);
+    ydif = adversaryPosition(i, 2)-defensePosition(i, 2);
+    xdif = adversaryPosition(i, 1)-defensePosition(i, 1);
     theta = atan2(ydif, xdif);
     dx = mobileDefenseSpeed*cos(theta); dy = mobileDefenseSpeed*sin(theta);
-    defensePosition(1, i+1) = defensePosition(1, i) + dx;
-    defensePosition(2, i+1) = defensePosition(2, i) + dy;
+    defensePosition(i+1, 1) = defensePosition(i, 1) + dx;
+    defensePosition(i+1, 2) = defensePosition(i, 2) + dy;
 end
 
 end % EOF
