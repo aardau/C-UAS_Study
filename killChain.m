@@ -9,7 +9,7 @@ function [updatedAdversaryPosition,killData] = killChain(adversaryPosition, mapF
 
             %Calculate the distance from staticDefense #j to each x,y pair
             %of UAS flight path
-            distanceToUAS = sqrt((mapFeatures.staticDefenses(j,1)-adversaryPosition(1,i))^2 + (mapFeatures.staticDefenses(j,2)-adversaryPosition(2,i))^2);
+            distanceToUAS = sqrt((mapFeatures.staticDefenses(j,1)-adversaryPosition(1,i)')^2 + (mapFeatures.staticDefenses(j,2)-adversaryPosition(2,i)')^2);
             
             %if the distance is less than effector #j's range, say its
             %detected.
@@ -21,7 +21,7 @@ function [updatedAdversaryPosition,killData] = killChain(adversaryPosition, mapF
         end
 
         %Check for a kill at each point after iterating all defenses
-        if kill == true; 
+        if kill == true 
             updatedAdversaryPosition = adversaryPosition(:,1:i);
             killData = adversaryPosition(:,i);
             return
@@ -29,7 +29,7 @@ function [updatedAdversaryPosition,killData] = killChain(adversaryPosition, mapF
     end
 
     %if no kills awarded then return unchanged flight tracks and no kill
-    if kill == false;
+    if kill == false
         updatedAdversaryPosition = adversaryPosition;
         killData = [];
     end
