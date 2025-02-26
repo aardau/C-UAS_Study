@@ -41,7 +41,7 @@ function mapFeatures = setupMapFile(mapBounds, effectorData, limits)
     end
 
     % calculate static vs. mobile number
-    numMobileDefenses = sum(effectorData(:, 4)) % Ignore NaN values
+    numMobileDefenses = sum(effectorData(:, 4)); % Ignore NaN values
     numStaticDefenses = height(effectorData) - numMobileDefenses;
 
     % create indexes for static + mobile defenses
@@ -68,7 +68,7 @@ function mapFeatures = setupMapFile(mapBounds, effectorData, limits)
     mapFeatures.base = struct('x', [-500, 500, 500, -500], 'y', [-500, -500, 500, 500]);
 
     % Define obstacles for the Hybrid A* path planning model to path around
-    mapFeatures.obstacles.number = 3;
+    mapFeatures.obstacles.number = 0;
     mapFeatures.obstacles.type = 1; % 0 = AABB, 1 = Polygon --> Keep as 1 
     mapFeatures.obstacles.vertices{1} = [-1500,1500; -1000,1000; -1000,500; -1500,0];
     mapFeatures.obstacles.vertices{2} = [-1750,-1250; 750,-1250; 750,-1500; -1750,-1500]; 

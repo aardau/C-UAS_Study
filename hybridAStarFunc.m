@@ -10,6 +10,7 @@ ymin = mapBounds(3); ymax = mapBounds(4);
 % Vehicle parameters (unnecessary to redefine but notes their existence)
 vel = velocity; % Vehicle speed
 theta = maxTheta; % Turn radius
+%theta = max(theta,0.01); %debug
 dT = timestep; %timestep
 
 % Initialize start and end goal
@@ -43,6 +44,8 @@ switch edge
         warning('Error in UAS spawning from switch cases')
 end
 
+% % This is optional code to change the goal from the origin to a random
+% % point along the base perimeter
 % % Extract base boundaries for goal determination
 % baseXmin = min(mapFeatures.base.x);
 % baseXmax = max(mapFeatures.base.x);
@@ -106,10 +109,15 @@ grid_th_down = start(3):-dth:domain(3,1);
 grid_th_up = start(3):dth:domain(3,2);
 grid_th = [fliplr(grid_th_down), grid_th_up(2:end)];
 LTH = length(grid_th);
-%%%redefine domain
+
+if LTH < 2 %debug
+    error('Turn angle is too low, causing inadequate heading discretization');
+end
+
+% Redefine domain
 domain = [ grid_x(1) grid_x(LX); grid_y(1) grid_y(LY); grid_th(1) grid_th(LTH)];
 
-%%%Compute Start and Goal Index
+% Compute Start and Goal Index
 start_index = [length(grid_x_left), length(grid_y_down), length(grid_th_down)];
 
 [~, g_ind_x] = min(abs(grid_x - goal(1)));
@@ -120,7 +128,7 @@ goal_index = [g_ind_x, g_ind_y, g_ind_th];
 start_indexc = (start_index(3) - 1)*LX*LY + (start_index(2) - 1)*LX + start_index(1);
 goal_indexc = (goal_index(3) - 1)*LX*LY + (goal_index(2) - 1)*LX + goal_index(1);
 
-%number of nodes in the grid
+% Number of nodes in the grid
 numgraph = LX*LY*LTH;
 
 % Plot the Start and Goal
@@ -130,18 +138,18 @@ hold on
 plot(start(1), start(2), 'go', 'Markersize', 6, 'Markerfacecolor', 'g');
 quiver(start(1), start(2), L*cos(start(3))*3, L*sin(start(3))*3, 'g', 'linewidth', 1);
 
-%start pose
+% Start pose
 plot(goal(1), goal(2), 'ro', 'Markersize', 6, 'Markerfacecolor', 'r');
 quiver(goal(1), goal(2), L*cos(goal(3))*3, L*sin(goal(3))*3, 'r', 'linewidth', 1);
 
-%goal pose
+% Goal pose
 plot(grid_x(goal_index(1)), grid_y(goal_index(2)), 'ms', 'Markersize', 6, 'Markerfacecolor', 'r');
 quiver(grid_x(goal_index(1)), grid_y(goal_index(2)), L*cos(grid_th(goal_index(3)))*5, L*sin(grid_th(goal_index(3)))*5, 'm', 'linewidth', 1);
 
 start_index = start_indexc;
 goal_index = goal_indexc;
 
-%plot output
+% Plot output
 plot_steps = 2;
 
 fprintf('Parameters defined for Hybrid A*. Planning Path...\n')
@@ -211,6 +219,11 @@ while ~isempty(frontier.cost)
     end
     
     actions = get_actions_kinem(current.node, L, theta, grid_x, grid_y, grid_th);
+    
+    if isempty(actions) %debug
+        error('No valid actions generated, theta might be too low');
+    end
+
     for aci = 1:num_actions
         newnode = struct();
         newnode.node = actions.newlocation(aci, :);

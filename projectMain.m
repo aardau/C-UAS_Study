@@ -17,8 +17,8 @@ mobileDefenseSpeed = 10;
 limits = [rangeMin, rangeMax;];
 
 % specify file name for input
-fn = "effector_inputs.xlsx"; % all static, lots of randomization
-%fn = "effector_inputs_SPECIFIED.xlsx"; % entirely specified starting condition, 3S 2M
+%fn = "effector_inputs.xlsx"; % all static, lots of randomization
+fn = "effector_inputs_SPECIFIED.xlsx"; % entirely specified starting condition, 3S 2M
 %fn = "effector_inputs_RAND.xlsx"; % entirely randomized setup
 effectorData = readmatrix(fn);
 
@@ -35,7 +35,7 @@ numMaxDefenses = height(effectorData); % Maximum number of defenses that spawn
 
 % UAS parameters
 velUAS = 20; % Velocity (units/s)
-maxThetaUAS = 10; % Maximum turn angle (deg)
+maxThetaUAS = 5; % Maximum turn angle (deg)
 dT = 1; % Time step (s) (Don't change to 0.1, it takes too long to compute HA*)
 
 % Mobile Defense parameters
