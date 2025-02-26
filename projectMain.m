@@ -1,6 +1,7 @@
 %% Main script for Counter-UAS simulation(s)
 clear; clc; close all;
 
+for N = 1:1
 %% Define parameters
 % Allow the projectMainApp (user GUI) to change these numbers eventually
 
@@ -16,9 +17,13 @@ mobileDefenseSpeed = 10;
 % create limits matrix
 limits = [rangeMin, rangeMax;];
 
+% probabilities
+trackProb = 0.1;
+killProb = 0.5;
+
 % specify file name for input
 %fn = "effector_inputs.xlsx"; % all static, lots of randomization
-fn = "effector_inputs_SPECIFIED.xlsx"; % entirely specified starting condition, 3S 2M
+fn = "effector_inputs_single_static.xlsx"; % entirely specified starting condition, 3S 2M
 %fn = "effector_inputs_RAND.xlsx"; % entirely randomized setup
 effectorData = readmatrix(fn);
 
@@ -35,7 +40,7 @@ numMaxDefenses = height(effectorData); % Maximum number of defenses that spawn
 
 % UAS parameters
 velUAS = 20; % Velocity (units/s)
-maxThetaUAS = 5; % Maximum turn angle (deg)
+maxThetaUAS = 15; % Maximum turn angle (deg)
 dT = 1; % Time step (s) (Don't change to 0.1, it takes too long to compute HA*)
 
 % Mobile Defense parameters
@@ -64,12 +69,12 @@ else
     selectedMobileDefense = NaN;
 end
 
-
 %% Kill Chain
 %returns new terminated flight tracks and positions of kill
 %[updatedAdversaryPosition, killPoints] = killChain(uasPosition, mapFeatures);
 [SDHits, MDHits] = killDetection(mapFeatures, uasPosition, mobileDefensePosition, selectedMobileDefense);
 updatedAdversaryPosition = uasPosition;
+[killVar(N), ~, killXY(N, :)] = killCheck(SDHits, MDHits, trackProb, killProb, mapFeatures, uasPosition);
 
 %% Plot
 % Plot the map, map features, and UAS track
@@ -81,3 +86,13 @@ plotMap(mapFeatures, mapBounds, updatedAdversaryPosition, mobileDefensePosition)
 hold on
 x = mobileDefensePosition(:, 1); y = mobileDefensePosition(:, 2);
 plot(x, y, 'cx')
+if killVar(N) == 1
+plot(killXY(N, 1), killXY(N, 2), 'gx', 'MarkerSize', 30, 'LineWidth', 8)
+end
+
+end % End of Monte-Carlo loop
+
+%% Calculations after sims
+% calculate success rate
+defenseRate = sum(killVar)/N * 100;
+fprintf("\nThe UAS was stopped in %.0f percent of runs.\n", defenseRate)
