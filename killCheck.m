@@ -1,4 +1,4 @@
-function [killVar, killTimeStep] = killCheck(SD, MD, trackProbability, killProbability, MF, UASP)
+function [killVar, killTimeStep, kxy] = killCheck(SD, MD, trackProbability, killProbability, MF, UASP)
 %Iterates throught the arrarys displaying whether or not the UAS was in
 %range. Determines if the track is established and if a kill is achieved.
 %Currently, the number of tracks needed is hard coded at 3
@@ -7,6 +7,7 @@ function [killVar, killTimeStep] = killCheck(SD, MD, trackProbability, killProba
 trackCount = 0;
 killVar = 0;
 killTimeStep = NaN;
+x = NaN; y = NaN;
 
 % iterate throught entire height (over time)
 for i = 1:height(SD) 
@@ -51,10 +52,13 @@ if ~isnan(killTimeStep)
     else
         fprintf("\nKill was achieved after the adversary reached the base\n")
         fprintf("\nUAS killed at (%.0f, %.0f)\n", x, y)
+        killVar = 0;
     end
 else
     fprintf("\nKill was not succesful\n")
 end
+
+kxy = [x; y];
 
 
 end % EOF
