@@ -1,6 +1,6 @@
 % Desc
 
-function [path] = hybridAStarFunc(mapBounds,mapFeatures, velocity,maxTheta,timestep)
+function [path] = OLD_hybridAStarFunc(mapBounds,mapFeatures, velocity,maxTheta,timestep)
 %%% Parameter Section for Backtracking Hybrid-A* %%%
 
 % Extract map bounds for calculations

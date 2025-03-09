@@ -48,7 +48,7 @@ mapFeatures = setupMapFile(mapBounds, effectorData, limits);
 
 %% Run Hybrid A*
 % Generate UAS path using a Hybrid A* path planning algorithm
-uasPath = hybridAStarFunc(mapBounds, mapFeatures, velUAS, maxThetaUAS, dT);
+uasPath = OLD_hybridAStarFunc(mapBounds, mapFeatures, velUAS, maxThetaUAS, dT);
 
 % Extract the (x,y) coordinates from uasPath for use in other functions
 uasPosition = [uasPath(:,1), uasPath(:,2)];

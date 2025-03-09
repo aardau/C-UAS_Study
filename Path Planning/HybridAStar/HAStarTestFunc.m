@@ -1,4 +1,4 @@
-function path = codegenPathPlanner(mapData,startPose,goalPose)
+function path = HAStarTestFunc(mapData,startPose,goalPose)
     %#codegen
        
     % Create a binary occupancy map
@@ -20,11 +20,11 @@ function path = codegenPathPlanner(mapData,startPose,goalPose)
     planner = plannerHybridAStar(validator);
     
     % Define kinematic constraints
-    planner.MinTurningRadius = 8; % Minimum turn radius in meters
-    planner.MotionPrimitiveLength = 2; % Step size for motion primitives
+    planner.MinTurningRadius = 4; % Minimum turn radius in meters
+    planner.MotionPrimitiveLength = 5; % Step size for motion primitives
     planner.ForwardCost = 1; % Cost of moving forward
     planner.ReverseCost = 1e6; % UAS cannot reverse
-    planner.DirectionSwitchingCost = 5; % Penalizes direction changes
+    planner.DirectionSwitchingCost = 1; % Penalizes direction changes
     
     % Compute a path for the given start and goal poses
     pathObj = plan(planner,startPose,goalPose);
