@@ -14,13 +14,13 @@ function path = HAStarTestFunc(mapData,startPose,goalPose)
     validator = validatorOccupancyMap(stateSpace,Map=map);
     
     % Set the validation distance for the validator
-    validator.ValidationDistance = 0.01;
+    validator.ValidationDistance = 0.1;
     
     % Assign the state validator object to the plannerHybridAStar object
     planner = plannerHybridAStar(validator);
     
     % Define kinematic constraints
-    planner.MinTurningRadius = 4; % Minimum turn radius in meters
+    planner.MinTurningRadius = 5; % Minimum turn radius in meters
     planner.MotionPrimitiveLength = 5; % Step size for motion primitives
     planner.ForwardCost = 1; % Cost of moving forward
     planner.ReverseCost = 1e6; % UAS cannot reverse

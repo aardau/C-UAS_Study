@@ -6,23 +6,10 @@ mapData = zeros(mapSize(1), mapSize(2)); % Empty occupancy grid
 
 % Define multiple polygon obstacles as cell arrays of [x, y] coordinates
 polygons = {
-    % Polygon 1 - Upper Left (West-North) - Stretched Wide
-    [400 3500; 1300 4100; 1800 3700; 1500 3200; 700 3100];
-
-    % Polygon 2 - Upper Right (East-North) - Expanded Diagonally
-    [3500 3900; 4300 4400; 4800 3900; 4600 3400; 3800 3300];
-
-    % Polygon 3 - Far Right (East) - Tall & Narrow
-    [4200 2000; 4500 2800; 4700 2100; 4600 1600; 4300 1500];
-
-    % Polygon 4 - Bottom Right (East-South) - Wide, Covers More Area
-    [3400 400; 3900 1300; 4500 1100; 4200 500];
-
-    % Polygon 5 - Bottom Left (West-South) - Large & Rotated
-    [600 700; 1500 1400; 1800 1100; 1300 500; 800 400];
-};
-
-
+    [1000 4000; 1500 3500; 1500 3000; 1000 2500];
+    [750 1250; 3250 1250; 3250 1000; 750 1000];
+    [3250 4500; 3250 3500; 3750 2000; 3750 4000];
+    };
 
 % Generate a grid of x, y coordinates for the map
 [X, Y] = meshgrid(1:mapSize(2), 1:mapSize(1));
@@ -32,10 +19,10 @@ for i = 1:length(polygons)
     % Extract X and Y coordinates
     polyX = polygons{i}(:,1);
     polyY = polygons{i}(:,2);
-    
+
     % Check which grid points are inside the polygon
     insideObstacle = inpolygon(X, Y, polyX, polyY);
-    
+
     % Assign occupied values to the binary occupancy grid
     mapData(insideObstacle) = 1;
 end
