@@ -23,29 +23,14 @@ killProb = 0.5;
 
 % specify file name for input
 %fn = "effector_inputs.xlsx"; % all static, lots of randomization
-fn = "effector_inputs_single_static.xlsx"; % entirely specified starting condition, 3S 2M
+fn = "effector_inputs_SPECIFIED.xlsx"; % entirely specified starting condition, 3S 2M
 %fn = "effector_inputs_RAND.xlsx"; % entirely randomized setup
 effectorData = readmatrix(fn);
 
-% Generation parameters for setupMap (old)
-% Defenses generation parameters
-rangeStatic = 200; % [min,max] of detection range in arbitrary length units
-rangeMobile = 100; % [min,max] of detection range in arbitrary length units
-defenseRanges = [rangeStatic, rangeMobile]; % For funcion inputs
-
-numMaxDefenses = height(effectorData); % Maximum number of defenses that spawn
-% currently unused variables
-%numStaticDefenses = randi([0,numMaxDefenses]); % Generate a random number of static defenses, including zero
-%numMobileDefenses = numMaxDefenses - numStaticDefenses; % Generate mobile defenses with remaining # of slots
-
 % UAS parameters
 velUAS = 20; % Velocity (units/s)
-maxThetaUAS = 15; % Maximum turn angle (deg)
-dT = 1; % Time step (s) (Don't change to 0.1, it takes too long to compute HA*)
-
-% Mobile Defense parameters
-velMD = 5; % Velocity, (units/s)
-maxThetaMD = 360; % Maximum turn angle (deg), setting to 360deg makes the vehicle behave closer to A* path finding
+minTurnRad = 8; % Minimum turn radius (units)
+dT = 1; % Time step (s) (don't change)
 
 %% Setup map features
 % Generate the various map features and place into a structure array
@@ -53,7 +38,7 @@ mapFeatures = setupMapFile(mapBounds, effectorData, limits);
 
 %% Run Hybrid A*
 % Generate UAS path using a Hybrid A* path planning algorithm
-uasPath = OLD_hybridAStarFunc(mapBounds, mapFeatures, velUAS, maxThetaUAS, dT);
+uasPath = NEW_hybridAStarFunc(mapBounds, mapFeatures, velUAS, minTurnRad, dT);
 
 % Extract the (x,y) coordinates from uasPath for use in other functions
 uasPosition = [uasPath(:,1), uasPath(:,2)];
@@ -96,3 +81,5 @@ end % End of Monte-Carlo loop
 % calculate success rate
 defenseRate = sum(killVar)/N * 100;
 fprintf("\nThe UAS was stopped in %.0f percent of runs.\n", defenseRate)
+
+plot(uasPath(:,1),uasPath(:,2),'o','Color','blue')

@@ -80,7 +80,7 @@ N = 3;  %number of dimensions
 %domain size, in search coords
 domain = [xmin, xmax; ymin, ymax; 0, 2*pi]; % [xmap length, ymap length, startangle]
 % Other defined variables for function
-cost_discretization = 8;
+cost_discretization = 1;
 L = vel*dT; %step length
 dx = L; dy = L; dth = L/theta;
 
