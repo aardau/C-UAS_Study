@@ -9,6 +9,7 @@ start = [0,0,0];
 goal = [0,0,0]; 
 
 % Choose a random edge of the map to spawn the UAS
+rng('shuffle') % change randi seed based on clock time 
 edge = randi(4);
 switch edge
     case 1 % Top edge
@@ -75,7 +76,7 @@ end
 L = speed*DT; % Step length
 dtr = pi/180; % Degrees to radian
 cost_discretization = 1; % Number of intermediate points for plotting
-relaxload = 0.3; % Relaxation parameter
+relaxload = 0.0; % Relaxation parameter
 
 % Define the domain (map)
 global domain;
@@ -363,11 +364,9 @@ if (plot_steps > 0) && (reached_goal == true)
     path_aci = flip(path_aci);
     for i = 1:length(path_aci)-2
         action = drawaction(path(i,:), L, R, path_aci(i+1), cost_discretization);
-        final = plot(action(:,1), action(:,2), 'LineWidth', 3, 'Color', 'magenta');
+        %final = plot(action(:,1), action(:,2), 'LineWidth', 3, 'Color', 'magenta');
     end
 end
-
-plot(path(:,1),path(:,2),'o','Color','blue')
 
 fprintf("Terminal Cost: %f\n", current.cost);
 fprintf("Terminal Load: %f\n", current.load);

@@ -40,28 +40,6 @@ function plotMap(mapFeatures, bounds, adversaryPosition, mobileDefensePosition)
         y2 = -sqrt(R^2 - (x - mapFeatures.mobileDefenses(j, 1)).^2) + mapFeatures.mobileDefenses(j, 2);
         plot(x, y1, x, y2,'Color',"b");
     end
-    
-
-    % Plot base
-    base = polyshape(mapFeatures.base.x, mapFeatures.base.y);
-    plot(base);
-
-    % Plot UAS path
-    %plot(adversaryPosition(1,:), adversaryPosition(2,:), 'r', 'LineWidth', 2);
-
-    % Plot map obstacles
-    obstacles = mapFeatures.obstacles;  % Extract obstacles from mapFeatures
-    xO = []; % Initialize X vals
-    yO = []; % Initialize y vals
-    
-    if isfield(mapFeatures, 'obstacles') && mapFeatures.obstacles.number > 0
-        for k = 1:obstacles.number
-            xO = [xO; obstacles.vertices{k}(:,1); obstacles.vertices{k}(1,1); NaN];
-            yO = [yO; obstacles.vertices{k}(:,2); obstacles.vertices{k}(1,2); NaN];
-            fill(obstacles.vertices{k}(:,1), obstacles.vertices{k}(:,2), 'k'); % Fill obstacles in black
-        end
-    plot(xO, yO, 'Color', [0.2, 0.2, 1], 'LineWidth', 2);
-    end
 
     % Adjust plot settings
     xlim([xmin, xmax]);

@@ -15,6 +15,8 @@
 
 function mapFeatures = setupMapFile(mapBounds, effectorData, limits)
     
+    rng('shuffle') % change randi seed to clock time 
+    
     % Extract map bounds for calculations
     xmin = mapBounds(1); xmax = mapBounds(2);
     ymin = mapBounds(3); ymax = mapBounds(4);
