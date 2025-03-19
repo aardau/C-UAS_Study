@@ -11,6 +11,6 @@ for n = 1:numMobileDefenses
     dist(n) = sqrt((xmd-xuas)^2+(ymd-yuas)^2);
 end
 end
-[~, selectedMD] = min(dist)
-dist
+[~, selectedMD] = min(dist);
+dist;
 end

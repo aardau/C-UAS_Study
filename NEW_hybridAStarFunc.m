@@ -39,7 +39,7 @@ switch edge
         warning('Error in UAS spawning from switch cases')
 end
 
-fprintf('Debug: Goal positions initialized at (%.2f, %.2f, %.2f)\n', goal(1), goal(2), goal(3));
+%fprintf('Debug: Goal positions initialized at (%.2f, %.2f, %.2f)\n', goal(1), goal(2), goal(3));
 
 % % This is optional code to change the goal from the origin to a random
 % % point along the base perimeter
@@ -149,14 +149,14 @@ start_index = [length(grid_x_left), length(grid_y_down), length(grid_th_down)];
 [~, g_ind_th] = min(abs(grid_th - goal(3)));
 goal_index = [g_ind_x, g_ind_y, g_ind_th];
 
-fprintf('Debug: Goal indices: X = %d, Y = %d, Theta = %d\n', g_ind_x, g_ind_y, g_ind_th);
+%fprintf('Debug: Goal indices: X = %d, Y = %d, Theta = %d\n', g_ind_x, g_ind_y, g_ind_th);
 
 % % Redefine goals to nearest grid values
 % goal(1) = grid_x(g_ind_x);
 % goal(2) = grid_y(g_ind_y);
 % goal(3) = grid_th(g_ind_th);
 
-fprintf('Debug: Goal position after snapping to grid (%.2f, %.2f, %.2f)\n', goal(1), goal(2), goal(3));
+%fprintf('Debug: Goal position after snapping to grid (%.2f, %.2f, %.2f)\n', goal(1), goal(2), goal(3));
 
 start_indexc = (start_index(3) - 1)*LX*LY + (start_index(2) - 1)*LX + start_index(1);
 goal_indexc = (goal_index(3) - 1)*LX*LY + (goal_index(2) - 1)*LX + goal_index(1);
@@ -178,7 +178,7 @@ if g_ind_x < 1 || g_ind_x > length(grid_x) || g_ind_y < 1 || g_ind_y > length(gr
     warning('Goal index is out of bounds: [%d, %d, %d]', g_ind_x, g_ind_y, g_ind_th);
 end
 
-fprintf('Debug: Goal index computed as %d, valid range [1, %d]\n', goal_indexc, numgraph);
+%fprintf('Debug: Goal index computed as %d, valid range [1, %d]\n', goal_indexc, numgraph);
 
 %%% Plot the Start and Goal & mesh the x-y (good for plotting)
 [grid_mesh_x, grid_mesh_y] = meshgrid(grid_x, grid_y);
@@ -380,7 +380,7 @@ while ~isempty(frontier.cost)
 end
 runtime = toc;
 
-fprintf('Debug: plot_steps = %d, reached_goal = %d\n', plot_steps, reached_goal);
+%fprintf('Debug: plot_steps = %d, reached_goal = %d\n', plot_steps, reached_goal);
 
 if (plot_steps > 0) && (reached_goal == true)
     %reconstruct the path
@@ -410,7 +410,7 @@ end
 
 % fprintf("Terminal Cost: %f\n", current.cost);
 % fprintf("Terminal Load: %f\n", current.load);
-fprintf("Runtime: %f s\n", runtime);
+fprintf("Hybrid A* Runtime: %f s\n", runtime);
 
 %debug
 if ~exist('path', 'var') || isempty(path)
