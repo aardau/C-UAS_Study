@@ -8,6 +8,9 @@ ymin = mapBounds(3); ymax = mapBounds(4);
 start = [0,0,0];
 goal = [0,0,0]; 
 
+% Initialize path
+path = [];
+
 % Choose a random edge of the map to spawn the UAS
 rng('shuffle') % change randi seed based on clock time 
 edge = randi(4);
@@ -35,6 +38,8 @@ switch edge
     otherwise % Prints warning if no case is satisfied
         warning('Error in UAS spawning from switch cases')
 end
+
+fprintf('Debug: Goal positions initialized at (%.2f, %.2f, %.2f)\n', goal(1), goal(2), goal(3));
 
 % % This is optional code to change the goal from the origin to a random
 % % point along the base perimeter
@@ -67,27 +72,22 @@ end
 %         warning('Error in base goal assignment from switch cases');
 % end
 
-% Vehicle Parameters
-% speed = 3; % Vehicle speed
-% R = 8; % Minimum turn radius
+% Check if goal is within bounds
+if goal(1) < xmin || goal(1) > xmax || goal(2) < ymin || goal(2) > ymax
+    warning('Goal coordinates are out of map bounds: [%f, %f]', goal(1), goal(2));
+end
 
 % Other defined variables for function
-% DT = 1; % Timestep
 L = speed*DT; % Step length
 dtr = pi/180; % Degrees to radian
 cost_discretization = 1; % Number of intermediate points for plotting
-relaxload = 0.0; % Relaxation parameter
+relaxload = 1; % Relaxation parameter
 
 % Define the domain (map)
-global domain;
+global domain; %code fails without global var
 N = 3;  %number of dimensions, (x,y,heading)
 domain = [xmin, xmax; ymin, ymax; 0, 2*pi]; % [xmap length, ymap length, startangle]
 dx = L; dy = L; dth = L/R;
-
-% %plot the domain
-% figure(1);
-% drawdomain(domain, 'k', N);
-% hold on;
 
 %%% Obstacles and Load Functions
 
@@ -128,8 +128,14 @@ grid_th_up = start(3):dth:domain(3,2);
 grid_th = [fliplr(grid_th_down), grid_th_up(2:end)];
 LTH = length(grid_th);
 
-if LTH < 2 %debug
+% Check if turn angle is too low
+if LTH < 2
     error('Turn angle is too low, causing inadequate heading discretization');
+end
+
+% Verify grid values
+if isempty(grid_x) || isempty(grid_y) || isempty(grid_th)
+    warning('Grid arrays are empty! Check domain setup.');
 end
 
 % redefine domain
@@ -143,11 +149,36 @@ start_index = [length(grid_x_left), length(grid_y_down), length(grid_th_down)];
 [~, g_ind_th] = min(abs(grid_th - goal(3)));
 goal_index = [g_ind_x, g_ind_y, g_ind_th];
 
+fprintf('Debug: Goal indices: X = %d, Y = %d, Theta = %d\n', g_ind_x, g_ind_y, g_ind_th);
+
+% % Redefine goals to nearest grid values
+% goal(1) = grid_x(g_ind_x);
+% goal(2) = grid_y(g_ind_y);
+% goal(3) = grid_th(g_ind_th);
+
+fprintf('Debug: Goal position after snapping to grid (%.2f, %.2f, %.2f)\n', goal(1), goal(2), goal(3));
+
 start_indexc = (start_index(3) - 1)*LX*LY + (start_index(2) - 1)*LX + start_index(1);
 goal_indexc = (goal_index(3) - 1)*LX*LY + (goal_index(2) - 1)*LX + goal_index(1);
 
+
 % Number of nodes in the grid
 numgraph = LX*LY*LTH;
+
+% Check computed indices
+if start_indexc < 1 || start_indexc > numgraph
+    warning('Start index out of bounds: %d (numgraph = %d)', start_indexc, numgraph);
+end
+if goal_indexc < 1 || goal_indexc > numgraph
+    warning('Goal index out of bounds: %d (numgraph = %d)', goal_indexc, numgraph);
+end
+
+% Check if goal index is valid
+if g_ind_x < 1 || g_ind_x > length(grid_x) || g_ind_y < 1 || g_ind_y > length(grid_y) || g_ind_th < 1 || g_ind_th > length(grid_th)
+    warning('Goal index is out of bounds: [%d, %d, %d]', g_ind_x, g_ind_y, g_ind_th);
+end
+
+fprintf('Debug: Goal index computed as %d, valid range [1, %d]\n', goal_indexc, numgraph);
 
 %%% Plot the Start and Goal & mesh the x-y (good for plotting)
 [grid_mesh_x, grid_mesh_y] = meshgrid(grid_x, grid_y);
@@ -175,7 +206,7 @@ goal_index = goal_indexc;
 % Plot the output
 plot_steps = 2;
 
-fprintf("Parameters Set, Running Search \n\n");
+%fprintf("Parameters Set, Running Search \n\n");
 
 %% Backtracking Hybrid A* Graph Search %%
 
@@ -275,10 +306,11 @@ while ~isempty(frontier.cost)
         break
     end
     
+    %fprintf('Debug: current.idx = %d, goal_index = %d\n', current.idx, goal_index);
+
     actions = get_actions_kinem(current.node, L, R, grid_x, grid_y, grid_th);
-    if isempty(actions) %debug
-        error('No valid actions generated, theta might be too low');
-    end
+
+
     for aci = 1:num_actions
         newnode = struct();
         newnode.node = actions.newlocation(aci, :);
@@ -287,6 +319,10 @@ while ~isempty(frontier.cost)
 
         node_admissibility = check_admissibility(obstacles, newnode, current, R, aci);
         
+        % if ~node_admissibility (spams command window)
+        %     fprintf('Node idx %d rejected due to admissibility check\n', newnode.idx);
+        % end
+
         %check if the node is valid
         if ~node_admissibility
             continue;
@@ -344,6 +380,8 @@ while ~isempty(frontier.cost)
 end
 runtime = toc;
 
+fprintf('Debug: plot_steps = %d, reached_goal = %d\n', plot_steps, reached_goal);
+
 if (plot_steps > 0) && (reached_goal == true)
     %reconstruct the path
     path = current.node;
@@ -366,11 +404,18 @@ if (plot_steps > 0) && (reached_goal == true)
         action = drawaction(path(i,:), L, R, path_aci(i+1), cost_discretization);
         %final = plot(action(:,1), action(:,2), 'LineWidth', 3, 'Color', 'magenta');
     end
+else
+    error('(plot_steps > 0) && (reached_goal == true) not satisfied to create plot!')
 end
 
-fprintf("Terminal Cost: %f\n", current.cost);
-fprintf("Terminal Load: %f\n", current.load);
+% fprintf("Terminal Cost: %f\n", current.cost);
+% fprintf("Terminal Load: %f\n", current.load);
 fprintf("Runtime: %f s\n", runtime);
 
+%debug
+if ~exist('path', 'var') || isempty(path)
+    warning('Path var not created! Error with Hybrid A* function');
+    path = [];
+end
 
 end %function end
