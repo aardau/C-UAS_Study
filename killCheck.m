@@ -47,15 +47,15 @@ if ~isnan(killTimeStep)
     % check if kill was before the UAS reached base
     test = inpolygon(x, y, xb, yb);
     if test == 0
-        fprintf("\nKill was succesfully outside of the base\n")
-        fprintf("\nUAS killed at (%.0f, %.0f)\n", x, y)
+        fprintf("Kill was succesfully outside of the base\n")
+        fprintf("UAS killed at (%.0f, %.0f)\n\n", x, y)
     else
-        fprintf("\nKill was achieved after the adversary reached the base\n")
-        fprintf("\nUAS killed at (%.0f, %.0f)\n", x, y)
+        fprintf("Kill was achieved after the adversary reached the base\n")
+        fprintf("UAS killed at (%.0f, %.0f)\n\n", x, y)
         killVar = 0;
     end
 else
-    fprintf("\nKill was not succesful\n")
+    fprintf("Kill was not succesful\n\n")
 end
 
 kxy = [x; y];

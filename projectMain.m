@@ -29,13 +29,25 @@ velUAS = 20; % Velocity (units/s)
 minTurnRad = 8; % Minimum turn radius (units)
 dT = 1; % Time step (s) (don't change)
 
+% Randomize randi seed for this session
+rng('shuffle')
+
 %% Generate map features 
 % Generate the various map features and place into a structure array
 mapFeatures = setupMapFile(mapBounds, effectorData, limits);
 
 %% Plot run-independent map features once
+
+% Figure 1 is the simulated environment
 figure(1);
 hold on
+
+% Adjust plot settings
+xlim([mapBounds(1), mapBounds(2)]);
+ylim([mapBounds(3), mapBounds(4)]);
+xlabel('X Position (m)');
+ylabel('Y Position (m)');
+grid on;
 
 % Plot base once
 base = polyshape(mapFeatures.base.x, mapFeatures.base.y);
@@ -75,7 +87,7 @@ end
 %% Start Monte-Carlo
 
 % Define parameters for Monte Carlo analysis
-maxIterations = 10;  % # of iterations for Monte Carlo
+maxIterations = 500;  % # of iterations for Monte Carlo
 killVar = zeros(maxIterations, 1);  % Initialize
 killXY = NaN(maxIterations, 2);  % Initialize
 
@@ -85,23 +97,21 @@ stdSuccessRate = zeros(maxIterations, 1);
 
 % Initialize success rate plot
 figure(2);
-successPlot = plot(nan, nan, 'b-', 'LineWidth', 2); % Empty plot
+successPlot = plot(nan, nan, 'o-', 'LineWidth', 1); % Empty plot
 xlabel('Number of Simulations');
 ylabel('Defense Success Rate (%)');
-title('Defense Success Rates Over Simulation');
+title('Cumulative Defense Success Rate');
+ylim([0 100])
 grid on;
 hold on;
 
 % Initialize standard deviation plot
 figure(3);
-stdPlot = plot(nan, nan, 'r-', 'LineWidth', 2); % Empty plot
+stdPlot = plot(nan, nan, 'o-', 'LineWidth', 1); % Empty plot
 xlabel('Number of Simulations');
 ylabel('Standard Deviation of Success Rate (%)');
-title('Standard Deviation of Defense Success Rate Over Simulation');
+title('Standard Deviation of Defense Success Rate');
 grid on;
-
-% Randomize randi seed for this session
-rng('shuffle')
 
 % Start Monte Carlo loop
 for N = 1:maxIterations
@@ -120,10 +130,6 @@ while isempty(uasPath) && attempts < maxAttempts
     attempts = attempts + 1;
 end
 
-if isempty(uasPath)
-    error('uasPath is empty! Check why NEW_hybridAStarFunc is not generating a path.');
-end
-
 % Extract the (x,y) coordinates from uasPath for use in other functions
 uasPosition = [uasPath(:,1), uasPath(:,2)];
 
@@ -140,10 +146,18 @@ end
 
 %% Kill Chain logic
 %returns new terminated flight tracks and positions of kill
-%[updatedAdversaryPosition, killPoints] = killChain(uasPosition, mapFeatures);
 [SDHits, MDHits] = killDetection(mapFeatures, uasPosition, mobileDefensePosition, selectedMobileDefense);
-updatedAdversaryPosition = uasPosition;
-[killVar(N), ~, killXY(N, :)] = killCheck(SDHits, MDHits, trackProb, killProb, mapFeatures, uasPosition);
+[killVar(N), killTimeStep, killXY(N, :)] = killCheck(SDHits, MDHits, trackProb, killProb, mapFeatures, uasPosition);
+
+% If kill, plot the truncated path
+if ~isnan(killTimeStep)
+    uasToPlot = uasPosition(1:killTimeStep, :);
+    mobileToPlot = mobileDefensePosition(1:killTimeStep, :);
+else
+    % If no kill, plot the entire path
+    uasToPlot = uasPosition;
+    mobileToPlot = mobileDefensePosition;
+end
 
 %% Calculate and plot success rate
 
@@ -163,27 +177,45 @@ set(stdPlot, 'XData', 1:N, 'YData', stdSuccessRate(1:N));
 % Refresh plots
 drawnow;
 
-%% Plot the rest of the simulated environment
-% % Plot the map, map features, and UAS track
+%% Plot the dynamic elements of the simulated environment
 
 % Adjust plot settings
-xlim([mapBounds(1), mapBounds(2)]);
-ylim([mapBounds(3), mapBounds(4)]);
-xlabel('X Position (m)');
-ylabel('Y Position (m)');
 title(sprintf('UAS Simulation After %d Iterations', N));
-grid on;
 
 % Delete prior mobile defense movement path
 delete(findobj(gca, 'Tag', 'dynamic'));
 
-% Plot mobile defense movement as a continuous path
-plot(mobileDefensePosition(:, 1), mobileDefensePosition(:, 2), 'c-', 'LineWidth', 1.5, 'DisplayName', 'Mobile Defense Path', 'Tag', 'dynamic');
-scatter(mobileDefensePosition(:, 1), mobileDefensePosition(:, 2), 10, 'c', 'filled', 'Tag', 'dynamic');
+% Plot mobile defense movement (continuous path w/ position points)
+plot(mobileToPlot(:,1), mobileToPlot(:,2), 'c-', 'LineWidth', 1.5, 'Tag', 'dynamic');
+scatter(mobileToPlot(:,1), mobileToPlot(:,2), 10, 'c', 'filled', 'Tag', 'dynamic');
 
-% Plot mobile defense kill marker
+% Plot the UAS path (continuous path w/ position points)
+plot(uasToPlot(:,1), uasToPlot(:,2), 'm-', 'LineWidth', 1.5, 'Tag', 'dynamic');
+scatter(uasToPlot(:,1), uasToPlot(:,2), 10, 'm', 'filled', 'Tag', 'dynamic');
+
+% Plot defense kill marker
 if killVar(N) == 1
-    plot(killXY(N, 1), killXY(N, 2), 'gx', 'MarkerSize', 1, 'LineWidth', 1)
+    % Only plot if there is a kill
+    if ~isnan(killTimeStep)
+        % Count the number of hits from mobile and static defenses at killTimeStep
+        mobileHitCount = sum(MDHits(killTimeStep, :));
+        staticHitCount = sum(SDHits(killTimeStep, :));
+        
+        % Choose the color based on which defense contributed more hits.
+        if mobileHitCount >= staticHitCount
+            % Blue for mobile defense kill marker
+            plot(killXY(N, 1), killXY(N, 2), 'bx', 'MarkerSize', 10, 'LineWidth', 2)
+        else
+            % Red for static defense kill marker
+            plot(killXY(N, 1), killXY(N, 2), 'rx', 'MarkerSize', 10, 'LineWidth', 2)
+        end
+    end
 end
 
 end % End of Monte-Carlo loop
+
+% Clear paths from last iteration in figure 1
+delete(findobj(gca, 'Tag', 'dynamic'));
+
+% End of simulation information
+fprintf('Simulation completed after %d Iterations\n',N)

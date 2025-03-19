@@ -130,7 +130,7 @@ LTH = length(grid_th);
 
 % Check if turn angle is too low
 if LTH < 2
-    error('Turn angle is too low, causing inadequate heading discretization');
+    warning('Turn angle is too low, causing inadequate heading discretization');
 end
 
 % Verify grid values
@@ -405,7 +405,7 @@ if (plot_steps > 0) && (reached_goal == true)
         %final = plot(action(:,1), action(:,2), 'LineWidth', 3, 'Color', 'magenta');
     end
 else
-    error('(plot_steps > 0) && (reached_goal == true) not satisfied to create plot!')
+    warning('(plot_steps > 0) && (reached_goal == true) not satisfied to create plot!')
 end
 
 % fprintf("Terminal Cost: %f\n", current.cost);
