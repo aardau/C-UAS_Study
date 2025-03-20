@@ -87,17 +87,20 @@ end
 %% Start Monte-Carlo
 
 % Define parameters for Monte Carlo analysis
-maxIterations = 500;  % # of iterations for Monte Carlo
+maxIterations = 10;  % # of iterations for Monte Carlo
 killVar = zeros(maxIterations, 1);  % Initialize
 killXY = NaN(maxIterations, 2);  % Initialize
 
 % Store success rate& standard deviation history
 successRateHistory = zeros(maxIterations, 1);
 stdSuccessRate = zeros(maxIterations, 1); 
+ciHistory = zeros(maxIterations, 1);
+lowerCIHistory = zeros(maxIterations, 1);
+upperCIHistory = zeros(maxIterations, 1);
 
 % Initialize success rate plot
 figure(2);
-successPlot = plot(nan, nan, 'o-', 'LineWidth', 1); % Empty plot
+successPlot = plot(nan, nan, 'o-', 'LineWidth', 1);
 xlabel('Number of Simulations');
 ylabel('Defense Success Rate (%)');
 title('Cumulative Defense Success Rate');
@@ -107,10 +110,19 @@ hold on;
 
 % Initialize standard deviation plot
 figure(3);
-stdPlot = plot(nan, nan, 'o-', 'LineWidth', 1); % Empty plot
+stdPlot = plot(nan, nan, 'o-', 'LineWidth', 1);
 xlabel('Number of Simulations');
 ylabel('Standard Deviation of Success Rate (%)');
 title('Standard Deviation of Defense Success Rate');
+grid on;
+
+% Initialize confidence interval plot
+figure(4);
+ciErrorBar = errorbar(nan, nan, nan, nan, 'o-', 'LineWidth', 1);
+xlabel('Number of Simulations');
+ylabel('Defense Success Rate (%)');
+title('Clopper-Pearson Confidence Interval');
+ylim([0 100])
 grid on;
 
 % Start Monte Carlo loop
@@ -159,7 +171,7 @@ else
     mobileToPlot = mobileDefensePosition;
 end
 
-%% Calculate and plot success rate
+%% Calculate and plot success rate, standard deviation, & confidence interval
 
 % Calculate defense success rate
 defenseRate = sum(killVar(1:N)) / N * 100;
@@ -168,11 +180,37 @@ successRateHistory(N) = defenseRate;
 % Calculate standard deviation based on all completed simulations
 stdSuccessRate(N) = std(successRateHistory(1:N));
 
+% Calculate Clopper-Pearson confidence interval using Stats toolbox
+[phat, pci] = binofit(sum(killVar(1:N)), N, 0.05);  % 95% confidence interval
+
+% Convert confidence interval percentages
+ciHistory(N) = phat * 100;
+lowerCIHistory(N) = pci(1) * 100;
+upperCIHistory(N) = pci(2) * 100;
+
+% % Calculate confidence interval using normal approximation (alternative)
+% p_hat = sum(killVar(1:N)) / N;
+% se_normal = sqrt(p_hat * (1 - p_hat) / N);
+% lower_bound = max(0, p_hat - 1.96 * se_normal);
+% upper_bound = min(1, p_hat + 1.96 * se_normal);
+% ciHistory(N) = p_hat * 100;
+% lowerCIHistory(N) = lower_bound * 100;
+% upperCIHistory(N) = upper_bound * 100;
+
+% Compute error bar lengths
+error_lower = successRateHistory(1:N) - lowerCIHistory(1:N);
+error_upper = upperCIHistory(1:N) - successRateHistory(1:N);
+
 % Update success rate plot
 set(successPlot, 'XData', 1:N, 'YData', successRateHistory(1:N));
 
 % Update standard deviation plot
 set(stdPlot, 'XData', 1:N, 'YData', stdSuccessRate(1:N));
+
+% Update confidence interval plot
+set(ciErrorBar, 'XData', 1:N, 'YData', successRateHistory(1:N), ...
+    'LData', successRateHistory(1:N) - lowerCIHistory(1:N), ...
+    'UData', upperCIHistory(1:N) - successRateHistory(1:N));
 
 % Refresh plots
 drawnow;
@@ -183,6 +221,7 @@ drawnow;
 title(sprintf('UAS Simulation After %d Iterations', N));
 
 % Delete prior mobile defense movement path
+figure(1)
 delete(findobj(gca, 'Tag', 'dynamic'));
 
 % Plot mobile defense movement (continuous path w/ position points)
@@ -215,6 +254,7 @@ end
 end % End of Monte-Carlo loop
 
 % Clear paths from last iteration in figure 1
+figure(1)
 delete(findobj(gca, 'Tag', 'dynamic'));
 
 % End of simulation information

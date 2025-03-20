@@ -12,25 +12,24 @@ goal = [0,0,0];
 path = [];
 
 % Choose a random edge of the map to spawn the UAS
-rng('shuffle') % change randi seed based on clock time 
 edge = randi(4);
 switch edge
-    case 1 % Top edge
+    case 1 % Top edge spawn
         start(1) = randi([xmin, xmax]);
         start(2) = ymax;
         start(3) = 3*pi/2;
         goal(3) = start(3); % Keep the same heading as the start
-    case 2 % Bottom edge
+    case 2 % Bottom edge spawn
         start(1) = randi([xmin, xmax]);
         start(2) = ymin;
         start(3) = pi/2;
         goal(3) = start(3); % Keep the same heading as the start
-    case 3 % Left edge
+    case 3 % Left edge spawn
         start(1) = xmin;
         start(2) = randi([ymin, ymax]);
         start(3) = 0;
         goal(3) = start(3); % Keep the same heading as the start
-    case 4 % Right edge
+    case 4 % Right edge spawn
         start(1) = xmax;
         start(2) = randi([ymin, ymax]);
         start(3) = pi;
@@ -41,36 +40,33 @@ end
 
 %fprintf('Debug: Goal positions initialized at (%.2f, %.2f, %.2f)\n', goal(1), goal(2), goal(3));
 
-% % This is optional code to change the goal from the origin to a random
-% % point along the base perimeter
-% % Extract base boundaries for goal determination
-% baseXmin = min(mapFeatures.base.x);
-% baseXmax = max(mapFeatures.base.x);
-% baseYmin = min(mapFeatures.base.y);
-% baseYmax = max(mapFeatures.base.y);
-% 
-% % Choose a random edge of the base perimeter to be the goal
-% baseEdge = randi(4);
-% switch baseEdge
-%     case 1 % Top edge
-%         goal(1) = randi([baseXmin, baseXmax]);
-%         goal(2) = baseYmax;
-%         goal(3) = start(3); % Keep the same heading as the start
-%     case 2 % Bottom edge
-%         goal(1) = randi([baseXmin, baseXmax]);
-%         goal(2) = baseYmin;
-%         goal(3) = start(3); % Keep the same heading as the start
-%     case 3 % Left edge
-%         goal(1) = baseXmin;
-%         goal(2) = randi([baseYmin, baseYmax]);
-%         goal(3) = start(3); % Keep the same heading as the start
-%     case 4 % Right edge
-%         goal(1) = baseXmax;
-%         goal(2) = randi([baseYmin, baseYmax]);
-%         goal(3) = start(3); % Keep the same heading as the start
-%     otherwise % Prints warning if no case is satisfied
-%         warning('Error in base goal assignment from switch cases');
-% end
+% Extract base boundaries for goal setting
+baseXmin = min(mapFeatures.base.x);
+baseXmax = max(mapFeatures.base.x);
+baseYmin = min(mapFeatures.base.y);
+baseYmax = max(mapFeatures.base.y);
+
+% Use the same spawn edge to determine the goal location along the base perimeter
+switch edge
+    case 1 % Top edge spawn --> goal on top wall
+        goal(1) = randi([baseXmin, baseXmax]);
+        goal(2) = baseYmax;
+        goal(3) = start(3);
+    case 2 % Bottom edge spawn --> goal on bottom wall
+        goal(1) = randi([baseXmin, baseXmax]);
+        goal(2) = baseYmin;
+        goal(3) = start(3);
+    case 3 % Left edge spawn --> goal on left wall
+        goal(1) = baseXmin;
+        goal(2) = randi([baseYmin, baseYmax]);
+        goal(3) = start(3);
+    case 4 % Right edge spawn --> goal on right wall
+        goal(1) = baseXmax;
+        goal(2) = randi([baseYmin, baseYmax]);
+        goal(3) = start(3);
+    otherwise
+        warning('Error in base goal assignment from switch cases');
+end
 
 % Check if goal is within bounds
 if goal(1) < xmin || goal(1) > xmax || goal(2) < ymin || goal(2) > ymax
