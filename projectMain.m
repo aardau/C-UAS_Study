@@ -162,16 +162,19 @@ end
 [killVar(N), killTimeStep, killXY(N, :)] = killCheck(SDHits, MDHits, trackProb, killProb, mapFeatures, uasPosition);
 
 % If kill, plot the truncated path
-if height(mapFeatures.mobileDefenses > 0)
-    if ~isnan(killTimeStep)
-        uasToPlot = uasPosition(1:killTimeStep, :);
+if ~isnan(killTimeStep)
+    uasToPlot = uasPosition(1:killTimeStep, :);
+    if height(mapFeatures.mobileDefenses > 0)
         mobileToPlot = mobileDefensePosition(1:killTimeStep, :);
-    else
-        % If no kill, plot the entire path
-        uasToPlot = uasPosition;
+    end
+else
+    % If no kill, plot the entire path
+    uasToPlot = uasPosition;
+    if height(mapFeatures.mobileDefenses > 0)
         mobileToPlot = mobileDefensePosition;
     end
 end
+
 
 %% Calculate and plot success rate, standard deviation, & confidence interval
 
