@@ -87,7 +87,7 @@ end
 %% Start Monte-Carlo
 
 % Define parameters for Monte Carlo analysis
-maxIterations = 100;  % # of iterations for Monte Carlo
+maxIterations = 20;  % # of iterations for Monte Carlo
 killVar = zeros(maxIterations, 1);  % Initialize
 killXY = NaN(maxIterations, 2);  % Initialize
 
@@ -162,13 +162,15 @@ end
 [killVar(N), killTimeStep, killXY(N, :)] = killCheck(SDHits, MDHits, trackProb, killProb, mapFeatures, uasPosition);
 
 % If kill, plot the truncated path
-if ~isnan(killTimeStep)
-    uasToPlot = uasPosition(1:killTimeStep, :);
-    mobileToPlot = mobileDefensePosition(1:killTimeStep, :);
-else
-    % If no kill, plot the entire path
-    uasToPlot = uasPosition;
-    mobileToPlot = mobileDefensePosition;
+if height(mapFeatures.mobileDefenses > 0)
+    if ~isnan(killTimeStep)
+        uasToPlot = uasPosition(1:killTimeStep, :);
+        mobileToPlot = mobileDefensePosition(1:killTimeStep, :);
+    else
+        % If no kill, plot the entire path
+        uasToPlot = uasPosition;
+        mobileToPlot = mobileDefensePosition;
+    end
 end
 
 %% Calculate and plot success rate, standard deviation, & confidence interval
