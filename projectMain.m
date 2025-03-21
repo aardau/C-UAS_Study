@@ -87,7 +87,7 @@ end
 %% Start Monte-Carlo
 
 % Define parameters for Monte Carlo analysis
-maxIterations = 10;  % # of iterations for Monte Carlo
+maxIterations = 100;  % # of iterations for Monte Carlo
 killVar = zeros(maxIterations, 1);  % Initialize
 killXY = NaN(maxIterations, 2);  % Initialize
 
@@ -188,15 +188,6 @@ ciHistory(N) = phat * 100;
 lowerCIHistory(N) = pci(1) * 100;
 upperCIHistory(N) = pci(2) * 100;
 
-% % Calculate confidence interval using normal approximation (alternative)
-% p_hat = sum(killVar(1:N)) / N;
-% se_normal = sqrt(p_hat * (1 - p_hat) / N);
-% lower_bound = max(0, p_hat - 1.96 * se_normal);
-% upper_bound = min(1, p_hat + 1.96 * se_normal);
-% ciHistory(N) = p_hat * 100;
-% lowerCIHistory(N) = lower_bound * 100;
-% upperCIHistory(N) = upper_bound * 100;
-
 % Compute error bar lengths
 error_lower = successRateHistory(1:N) - lowerCIHistory(1:N);
 error_upper = upperCIHistory(1:N) - successRateHistory(1:N);
@@ -258,4 +249,7 @@ figure(1)
 delete(findobj(gca, 'Tag', 'dynamic'));
 
 % End of simulation information
-fprintf('Simulation completed after %d Iterations\n',N)
+fprintf('Simulation completed after %d Iterations\n', N);
+fprintf('Final Defense Success Rate: %.2f%%\n', successRateHistory(end));
+fprintf('Standard Deviation of Success Rate: %.2f%%\n', stdSuccessRate(end));
+fprintf('95%% Confidence Interval: [%.2f%%, %.2f%%]\n', lowerCIHistory(end), upperCIHistory(end));
