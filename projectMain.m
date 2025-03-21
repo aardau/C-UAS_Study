@@ -217,9 +217,11 @@ title(sprintf('UAS Simulation After %d Iterations', N));
 figure(1)
 delete(findobj(gca, 'Tag', 'dynamic'));
 
-% Plot mobile defense movement (continuous path w/ position points)
-plot(mobileToPlot(:,1), mobileToPlot(:,2), 'c-', 'LineWidth', 1.5, 'Tag', 'dynamic');
-scatter(mobileToPlot(:,1), mobileToPlot(:,2), 10, 'c', 'filled', 'Tag', 'dynamic');
+if height(mapFeatures.mobileDefenses) > 0
+    % Plot mobile defense movement (continuous path w/ position points)
+    plot(mobileToPlot(:,1), mobileToPlot(:,2), 'c-', 'LineWidth', 1.5, 'Tag', 'dynamic');
+    scatter(mobileToPlot(:,1), mobileToPlot(:,2), 10, 'c', 'filled', 'Tag', 'dynamic');
+end
 
 % Plot the UAS path (continuous path w/ position points)
 plot(uasToPlot(:,1), uasToPlot(:,2), 'm-', 'LineWidth', 1.5, 'Tag', 'dynamic');
