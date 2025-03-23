@@ -15,14 +15,15 @@ mobileDefenseSpeed = 10;
 limits = [rangeMin, rangeMax;];
 
 % Kill-chain probabilities
-trackProb = 0.1;
-killProb = 0.5;
+staticTrackProb = 0.1;
+mobileTrackProb = 1 * staticTrackProb; % X% as effective
+staticKillProb = 0.5;
+mobileKillProb = 1 * staticKillProb; % X% as effective
 
-% Specify file name for defense placements
-%fn = "effector_inputs.xlsx"; % all static, lots of randomization
-fn = "effector_inputs_SPECIFIED.xlsx"; % entirely specified starting condition, 3S 2M
-%fn = "effector_inputs_RAND.xlsx"; % entirely randomized setup
+% % Specify file name for defense placements
+fn = "benchmark_static_1.xlsx"; % benchmark
 effectorData = readmatrix(fn);
+
 
 % UAS parameters
 velUAS = 20; % Velocity (units/s)
@@ -87,7 +88,7 @@ end
 %% Start Monte-Carlo
 
 % Define parameters for Monte Carlo analysis
-maxIterations = 20;  % # of iterations for Monte Carlo
+maxIterations = 10;  % # of iterations for Monte Carlo
 killVar = zeros(maxIterations, 1);  % Initialize
 killXY = NaN(maxIterations, 2);  % Initialize
 
@@ -159,7 +160,7 @@ end
 %% Kill Chain logic
 %returns new terminated flight tracks and positions of kill
 [SDHits, MDHits] = killDetection(mapFeatures, uasPosition, mobileDefensePosition, selectedMobileDefense);
-[killVar(N), killTimeStep, killXY(N, :)] = killCheck(SDHits, MDHits, trackProb, killProb, mapFeatures, uasPosition);
+[killVar(N), killTimeStep, killXY(N, :)] = killCheck(SDHits, MDHits, staticTrackProb, mobileTrackProb, staticKillProb, mobileKillProb, mapFeatures, uasPosition);
 
 % If kill, plot the truncated path
 if ~isnan(killTimeStep)
