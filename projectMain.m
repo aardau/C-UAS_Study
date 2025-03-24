@@ -9,16 +9,16 @@ mapBounds = [-2500, 2500, -2500, 2500]; % [xmin, xmax, ymin, ymax] in arbitrary 
 % Effector generation parameters
 rangeMin = 500;
 rangeMax = 500;
-mobileDefenseSpeed = 10;
+mobileDefenseSpeed = 5;
 
 % Create limits matrix
 limits = [rangeMin, rangeMax;];
 
 % Kill-chain probabilities
 staticTrackProb = 0.1;
-mobileTrackProb = 1 * staticTrackProb; % X% as effective
+mobileTrackProb = 0.75 * staticTrackProb; % X% as effective
 staticKillProb = 0.5;
-mobileKillProb = 1 * staticKillProb; % X% as effective
+mobileKillProb = 0.75 * staticKillProb; % X% as effective
 
 % % Specify file name for defense placements
 % fn = "benchmark_static_1.xlsx"; % benchmark
