@@ -21,9 +21,10 @@ staticKillProb = 0.5;
 mobileKillProb = 1 * staticKillProb; % X% as effective
 
 % % Specify file name for defense placements
-fn = "benchmark_static_1.xlsx"; % benchmark
-effectorData = readmatrix(fn);
-
+% fn = "benchmark_static_1.xlsx"; % benchmark
+% effectorData = readmatrix(fn);
+effectorData = [-500, 0, 562.5, 1;  % X, Y, radius, mobile 
+                0, 0, 1, 0]; % X, Y, radius, static (dummy)
 
 % UAS parameters
 velUAS = 20; % Velocity (units/s)
@@ -88,7 +89,7 @@ end
 %% Start Monte-Carlo
 
 % Define parameters for Monte Carlo analysis
-maxIterations = 10;  % # of iterations for Monte Carlo
+maxIterations = 1000;  % # of iterations for Monte Carlo
 killVar = zeros(maxIterations, 1);  % Initialize
 killXY = NaN(maxIterations, 2);  % Initialize
 
