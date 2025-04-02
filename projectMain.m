@@ -21,10 +21,8 @@ staticKillProb = 0.5;
 mobileKillProb = 0.75 * staticKillProb; % X% as effective
 
 % % Specify file name for defense placements
-% fn = "benchmark_static_1.xlsx"; % benchmark
-% effectorData = readmatrix(fn);
-effectorData = [-500, 0, 562.5, 1;  % X, Y, radius, mobile 
-                0, 0, 1, 0]; % X, Y, radius, static (dummy)
+fn = "benchmark_mobile_3.xlsx"; 
+effectorData = readmatrix(fn);
 
 % UAS parameters
 velUAS = 20; % Velocity (units/s)
@@ -39,57 +37,14 @@ rng('shuffle')
 mapFeatures = setupMapFile(mapBounds, effectorData, limits);
 
 %% Plot run-independent map features once
-
-% Figure 1 is the simulated environment
-figure(1);
-hold on
-
-% Adjust plot settings
-xlim([mapBounds(1), mapBounds(2)]);
-ylim([mapBounds(3), mapBounds(4)]);
-xlabel('X Position (m)');
-ylabel('Y Position (m)');
-grid on;
-
-% Plot base once
-base = polyshape(mapFeatures.base.x, mapFeatures.base.y);
-plot(base);
-
-% Plot map obstacles once
-obstacles = mapFeatures.obstacles;  % Extract obstacles from mapFeatures
-xO = []; % Initialize X vals
-yO = []; % Initialize y vals
-if isfield(mapFeatures, 'obstacles') && mapFeatures.obstacles.number > 0
-    for k = 1:obstacles.number
-        xO = [xO; obstacles.vertices{k}(:,1); obstacles.vertices{k}(1,1); NaN];
-        yO = [yO; obstacles.vertices{k}(:,2); obstacles.vertices{k}(1,2); NaN];
-        fill(obstacles.vertices{k}(:,1), obstacles.vertices{k}(:,2), 'k'); % Fill obstacles in black
-    end
-    plot(xO, yO, 'Color', [0.2, 0.2, 1], 'LineWidth', 2);
-end
-
-%Plot static defenses once
-for i = 1:height(mapFeatures.staticDefenses)
-    x = mapFeatures.staticDefenses(i, 1) - mapFeatures.staticDefenses(i, 3):1:mapFeatures.staticDefenses(i, 1) + mapFeatures.staticDefenses(i, 3);
-    R = mapFeatures.staticDefenses(i, 3);
-    y1 = sqrt(R^2 - (x - mapFeatures.staticDefenses(i, 1)).^2) + mapFeatures.staticDefenses(i, 2);
-    y2 = -sqrt(R^2 - (x - mapFeatures.staticDefenses(i, 1)).^2) + mapFeatures.staticDefenses(i, 2);
-    plot(x, y1, x, y2,'Color',"r");
-end
-
-%Plot mobile defenses once
-for j = 1:height(mapFeatures.mobileDefenses)
-    x = mapFeatures.mobileDefenses(j, 1) - mapFeatures.mobileDefenses(j, 3):1:mapFeatures.mobileDefenses(j, 1) + mapFeatures.mobileDefenses(j, 3);
-    R = mapFeatures.mobileDefenses(j, 3);
-    y1 = sqrt(R^2 - (x - mapFeatures.mobileDefenses(j, 1)).^2) + mapFeatures.mobileDefenses(j, 2);
-    y2 = -sqrt(R^2 - (x - mapFeatures.mobileDefenses(j, 1)).^2) + mapFeatures.mobileDefenses(j, 2);
-    plot(x, y1, x, y2,'Color',"b");
-end
+% Initializes the simulated environment figure and plots run-independent
+% map features like the base, obstactles, and defense starting positions
+plotStaticMapFeatures(mapBounds, mapFeatures);
 
 %% Start Monte-Carlo
 
 % Define parameters for Monte Carlo analysis
-maxIterations = 1000;  % # of iterations for Monte Carlo
+maxIterations = 5;  % # of iterations for Monte Carlo
 killVar = zeros(maxIterations, 1);  % Initialize
 killXY = NaN(maxIterations, 2);  % Initialize
 
