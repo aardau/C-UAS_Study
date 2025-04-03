@@ -195,7 +195,6 @@ quiver(grid_x(goal_index(1)), grid_y(goal_index(2)), L*cos(grid_th(goal_index(3)
 % Plot the obstacles and the load functions
 plot_loadfunc(loadfunc, grid_mesh_x, grid_mesh_y, figure(1));
 plot_obstacles(obstacles, figure(1));
-
 start_index = start_indexc;
 goal_index = goal_indexc;
 
