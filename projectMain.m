@@ -29,7 +29,7 @@ velUAS = 20; % Velocity (units/s)
 minTurnRad = 8; % Minimum turn radius (units)
 dT = 1; % Time step (s) (don't change)
 
-% Randomize randi seed for this session
+% Randomize randi seeds for this session
 rng('shuffle')
 
 %% Generate map features 
@@ -106,7 +106,7 @@ MCData = calculateMonteCarloData(MCData, N);
 
 %% Plots dynamic map features
 % Dynamically updates the environment map (figure 1) and the three data
-% maps (figures 2-4)
+% plots (figures 2-4)
 plotDynamicMapFeatures(N, MCData, plotHandles, uasToPlot, mobileToPlot, killTimeStep, MDHits, SDHits, mapFeatures);
 
 end % End of Monte-Carlo loop
