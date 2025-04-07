@@ -1,5 +1,3 @@
-
-
 function [updatedAdversaryPosition,killData] = killChain(adversaryPosition, mapFeatures)
 
     kill = false;

@@ -1,5 +1,5 @@
 function [defensePosition] = mobileDefensePathing(adversaryPosition, initialDefensePosition, mobileDefenseSpeed, dT)
-%Path planning for mobile defenses
+% Path planning for mobile defenses
 %   Currently whatever mobile defense is closest to the 'breach' is
 %   selected for movement towards the UAS. Currently moves linearly towards
 %   the UAS's current position.

@@ -13,4 +13,4 @@ end
 end
 [~, selectedMD] = min(dist);
 dist;
-end
+end 

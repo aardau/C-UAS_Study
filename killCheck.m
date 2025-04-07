@@ -1,7 +1,7 @@
 function [killVar, killTimeStep, kxy] = killCheck(SD, MD, staticTrackProb, mobileTrackProb, staticKillProb, mobileKillProb, MF, UASP)
-%Iterates throught the arrarys displaying whether or not the UAS was in
-%range. Determines if the track is established and if a kill is achieved.
-%Currently, the number of tracks needed is hard coded at 3
+% Iterates throught the arrarys displaying whether or not the UAS was in
+% range. Determines if the track is established and if a kill is achieved.
+% Currently, the number of tracks needed is hard coded at 3
 
 % Initialize counting variables
 staticCount = 0;

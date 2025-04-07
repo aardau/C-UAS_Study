@@ -68,12 +68,39 @@ function mapFeatures = setupMapFile(mapBounds, effectorData, limits)
     mapFeatures.base = struct('x', [-500, 500, 500, -500], 'y', [-500, -500, 500, 500]);
 
     % Define obstacles for the Hybrid A* path planning model to path around
-    mapFeatures.obstacles.number = 0;
+    mapFeatures.obstacles.number = 3;
     mapFeatures.obstacles.type = 1; % 0 = AABB, 1 = Polygon --> Keep as 1 
-    mapFeatures.obstacles.vertices{1} = [-1500,1500; -1000,1000; -1000,500; -1500,0];
-    mapFeatures.obstacles.vertices{2} = [-1750,-1250; 750,-1250; 750,-1500; -1750,-1500]; 
-    mapFeatures.obstacles.vertices{3} = [750,2000; 750,1000; 1250,-500; 1250,1500];
+    % mapFeatures.obstacles.vertices{1} = [-1500,1500; -1000,1000; -1000,500; -1500,0];
+    % mapFeatures.obstacles.vertices{2} = [-1750,-1250; 750,-1250; 750,-1500; -1750,-1500]; 
+    % mapFeatures.obstacles.vertices{3} = [750,2000; 750,1000; 1250,-500; 1250,1500];
     
+
+% Polygon 1 – Upper Left (West-North), scaled ~20% smaller
+mapFeatures.obstacles.vertices{1} = [
+    -1830, 1040;
+    -1320, 1440;
+    -920, 1120;
+    -1120, 760;
+    -1680, 680
+];
+
+% Polygon 3 – Far Right (East), scaled ~20% smaller
+mapFeatures.obstacles.vertices{2} = [
+    1580, -400;
+    1840, 140;
+    2020, -360;
+    1940, -760;
+    1660, -800
+];
+
+% Polygon 5 – Bottom Left (West-South), scaled ~20% smaller
+mapFeatures.obstacles.vertices{3} = [
+    -1740, -1740;
+    -1060, -1180;
+    -820, -1340;
+    -1160, -1740;
+    -1580, -1800
+];
     
     % Additional map features, like no-fly zones and terrain, can be added 
     % here. Don't forget to write it as a structure var!

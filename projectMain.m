@@ -21,8 +21,11 @@ staticKillProb = 0.5;
 mobileKillProb = 0.75 * staticKillProb; % 75% as effective as static
 
 % % Specify file name for defense placements and extract the data
-fn = "benchmark_mobile_3.xlsx"; 
-effectorData = readmatrix(fn);
+% fn = "benchmark_mobile_3.xlsx"; 
+% effectorData = readmatrix(fn);
+effectorData = [0, 700, 562.5, 1;
+                -606, -350, 750, 0;
+                 606, -350, 750, 0];
 
 % UAS parameters
 velUAS = 20; % Velocity (units/s)
@@ -44,7 +47,7 @@ plotStaticMapFeatures(mapBounds, mapFeatures);
 %% Start Monte-Carlo
 
 % Define the maximum number of iterations for the Monte Carlo analysis
-maxIterations = 5;
+maxIterations = 3;
 
 % Initializes Monte Carlo analysis data structure and their associated plots
 [MCData, plotHandles] = plotMonteCarloData(maxIterations);
@@ -75,6 +78,7 @@ if height(mapFeatures.mobileDefenses) > 0
 selectedMobileDefense = mobileDefenseSelection(height(mapFeatures.mobileDefenses), mapFeatures.mobileDefenses, uasPosition);
 mDInitialPosition = mapFeatures.mobileDefenses(selectedMobileDefense, 1:2);
 mobileDefensePosition = mobileDefensePathing(uasPosition, mDInitialPosition, mobileDefenseSpeed, dT);
+
 else
     mobileDefensePosition = [NaN, NaN];
     selectedMobileDefense = NaN;
@@ -109,11 +113,13 @@ MCData = calculateMonteCarloData(MCData, N);
 % plots (figures 2-4)
 plotDynamicMapFeatures(N, MCData, plotHandles, uasToPlot, mobileToPlot, killTimeStep, MDHits, SDHits, mapFeatures);
 
+animateSimMovement(uasToPlot, mobileToPlot, 562.5, 0.02, killTimeStep, 'simulation.gif', N);
+
 end % End of Monte-Carlo loop
 
 % Clear paths from last iteration in figure 1
-figure(1)
-delete(findobj(gca, 'Tag', 'dynamic'));
+% figure(1)
+% delete(findobj(gca, 'Tag', 'dynamic'));
 
 % End of simulation information
 fprintf('Simulation completed after %d Iterations\n', maxIterations);

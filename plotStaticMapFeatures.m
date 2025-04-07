@@ -9,8 +9,8 @@ hold on
 % Adjust plot settings for figure 1
 xlim([mapBounds(1), mapBounds(2)]);
 ylim([mapBounds(3), mapBounds(4)]);
-xlabel('X Position (m)');
-ylabel('Y Position (m)');
+xlabel('X Position (units)');
+ylabel('Y Position (units)');
 grid on;
 
 % Plot base
